@@ -1,0 +1,11 @@
+{
+    "pipeline": {
+        "name": "basic-example",
+        "description": "pipeline configuration file for the basic-example pipeline",
+        "env": [
+            { "description": "environment variables for the pipeline"},
+            { "pipeline-directory": "/data/hpcdata/users/matsco/simple-action-pipeline/" },
+            { "pipeline-workers": 4}
+        ]
+    }
+}
