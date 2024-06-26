@@ -1,3 +1,3 @@
-# simple-action-pipeline
+# simple-action-pipeline (SAP)
 
 A simple pipeline framework for implementing scheduled sequential and parallel actions. Designed around a single configuration file and implementing an uncomplicated workflow manager.
