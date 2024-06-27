@@ -1,5 +1,9 @@
 import setuptools
 
+def get_content(filename):
+  with open(filename, "r") as fh:
+    return fh.read()
+
 setuptools.setup(
   include_package_data=True,
   name='sap',
