@@ -24,3 +24,8 @@ Once activated, install the sap package into the python virtual environment:
 git clone https://github.com/antarctica/simple-action-pipeline ./sap
 pip install -e ./sap
 ```  
+### Usage
+A simplified implementation of a simple-action-pipeline is given in the `example` folder.
+```
+cd ./example
+```
