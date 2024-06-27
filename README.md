@@ -19,6 +19,6 @@ source path_to_new_virtual_env/bin/activate
 
 Once activated, install the sap package into the python virtual environment:  
 ```
-git clone https://github.com/antarctica/simple-action-pipeline 
+git clone https://github.com/antarctica/simple-action-pipeline ./sap
 pip install -e ./sap
 ```  
