@@ -1,0 +1,24 @@
+{
+    "application": {
+        "name": "basic-example",
+        "description": "application configuration file for the basic-example pipeline",
+        "env": { "description": "environment variables for the application",
+                 "create-env-file": true,
+                 "env-filename": "application.env",
+                 "variables": [
+                { "SCRIPTS_DIRECTORY": "/data/hpcdata/users/matsco/simple-action-pipeline/example/scripts" },
+                { "APPLICATON_DATASTORE": "/data/hpcdata/users/matsco/simple-action-pipeline/example/datastore" },
+                { "APPLICATION_OUTPUT": "/data/hpcdata/users/matsco/simple-action-pipeline/example/output" }
+            ]
+        },
+        "sequence": { "description": "sequence of actions for the application",
+                      "sequence": [
+                { "script": "read_data.sh" ,      "depends": "" },
+                { "script": "transform_data.sh" , "depends": "read_data.sh" },
+                { "script": "split_data1.sh" ,    "depends": "transform_data.sh" },
+                { "script": "split_data2.sh" ,    "depends": "transform_data.sh" },
+                { "script": "print_results.sh" ,  "depends": [ "split_data1.sh" , "split_data2.sh" ] }
+            ]
+        }
+    }
+}

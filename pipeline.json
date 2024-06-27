@@ -2,11 +2,15 @@
     "pipeline": {
         "name": "basic-example",
         "description": "pipeline configuration file for the basic-example pipeline",
-        "env": [
-            { "description": "environment variables for the pipeline"},
-            { "pipeline-directory": "/data/hpcdata/users/matsco/simple-action-pipeline/" },
-            { "pipeline-workers": 4}
-        ],
+        "env": { "description": "environment variables for the pipeline",
+                 "create-env-file": true,
+                 "env-filename": "pipeline.env",
+                 "variables": [
+                { "PIPELINE_DIRECTORY": "/data/hpcdata/users/matsco/simple-action-pipeline/" },
+                { "PIPELINE_WORKERS": 4 },
+                { "PIPELINE_ACTIVEHOURS": [ 9, 10, 11, 12, 13, 14, 15 ] }
+            ]
+        },
         "python-env": "./activate"
     }
 }
