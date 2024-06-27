@@ -8,10 +8,17 @@ The simple action pipeline has some standard features which wrap around any appl
 
 ### Installation
 It is recommended that the sap package is installed and used within a python virtual environment. To create a python virtual environment:  
-```python -m venv path_to_new_virtual_env```  
+```
+python -m venv path_to_new_virtual_env
+```  
   
 Then activate the python virtual environment:  
-```source path_to_new_virtual_env/bin/activate```  
+```
+source path_to_new_virtual_env/bin/activate
+```  
 
 Once activated, install the sap package into the python virtual environment:  
-```pip install -e ./sap```  
+```
+git clone https://github.com/antarctica/simple-action-pipeline 
+pip install -e ./sap
+```  
