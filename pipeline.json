@@ -6,6 +6,7 @@
             { "description": "environment variables for the pipeline"},
             { "pipeline-directory": "/data/hpcdata/users/matsco/simple-action-pipeline/" },
             { "pipeline-workers": 4}
-        ]
+        ],
+        "python-env": "./activate"
     }
 }
