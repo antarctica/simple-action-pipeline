@@ -6,9 +6,9 @@
                  "create-env-file": true,
                  "env-filename": "pipeline.env",
                  "variables": [
-                { "PIPELINE_DIRECTORY": "/data/hpcdata/users/matsco/simple-action-pipeline/" },
-                { "PIPELINE_WORKERS": 4 },
-                { "PIPELINE_ACTIVEHOURS": [ 9, 10, 11, 12, 13, 14, 15 ] }
+                { "PIPELINE_DIRECTORY": "/data/hpcdata/users/matsco/simple-action-pipeline/example" },
+                { "PIPELINE_MAXWORKERS": 4 },
+                { "PIPELINE_ACTIVEHOURS": "9 10 11 12 13 14 15" }
             ]
         },
         "python-env": "./activate"

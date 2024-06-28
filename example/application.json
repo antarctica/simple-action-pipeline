@@ -6,6 +6,7 @@
                  "create-env-file": true,
                  "env-filename": "application.env",
                  "variables": [
+                { "PIPELINE_DIRECTORY": "/data/hpcdata/users/matsco/simple-action-pipeline/example" },
                 { "SCRIPTS_DIRECTORY": "/data/hpcdata/users/matsco/simple-action-pipeline/example/scripts" },
                 { "APPLICATON_DATASTORE": "/data/hpcdata/users/matsco/simple-action-pipeline/example/datastore" },
                 { "APPLICATION_OUTPUT": "/data/hpcdata/users/matsco/simple-action-pipeline/example/output" }
