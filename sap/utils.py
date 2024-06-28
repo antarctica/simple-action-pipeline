@@ -55,7 +55,15 @@ class configuration:
 
                 except:
                     print("!! error/undefined PIPELINE_DIRECTORY")
-                
+
+
+# BASIC guide
+# import utils
+# c = utils.configuration()
+# vals = c.json_ingest("/data/hpcdata/users/matsco/simple-action-pipeline/example/pipeline.json")
+# c.create_envfile(vals)  # <- for pipeline.env
+# vals = c.json_ingest("/data/hpcdata/users/matsco/simple-action-pipeline/example/application.json")
+# c.create_envfile(vals)  # <- for application.env
 
 def add(a, b):
     return a+b
