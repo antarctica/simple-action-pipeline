@@ -1,4 +1,4 @@
-import json
+import yaml
 import os
 
 class configuration:
@@ -8,17 +8,17 @@ class configuration:
     def __init__(self):
         pass
 
-    def json_ingest(self, filepath_in):
+    def yaml_ingest(self, filepath_in):
         '''
-        Ingests JSON data from a valid input filepath.
+        Ingests YAML data from a valid input filepath.
         '''
         retval = None
         if os.path.exists(filepath_in):
             if os.path.isfile(filepath_in):
-                with open(filepath_in) as jsonfile:
-                    data_json = json.load(jsonfile)
-                    print(data_json)
-                    retval = data_json
+                with open(filepath_in) as yamlfile:
+                    data_yaml = yaml.safe_load(yamlfile)
+                    print(data_yaml)
+                    retval = data_yaml
             else:
                 print("!! not a file")
         else:
@@ -26,28 +26,28 @@ class configuration:
         
         return retval
     
-    def create_envfile(self, json_config):
+    def create_envfile(self, yaml_config):
         '''
-        Generates env files for a given json input config. The env file gets
+        Generates env files for a given YAML input config. The env file gets
         deposited in the PIPELINE_DIRECTORY and for this reason the 
-        PIPELINE_DIRECTORY must be defined in the 'env' section of the json.
+        PIPELINE_DIRECTORY must be defined in the 'env' section of the YAML.
         '''
-        if 'pipeline' in json_config and 'env' in json_config['pipeline']:
-            json_subset = json_config['pipeline']['env']
-        elif 'application' in json_config and 'env' in json_config['application']:
-            json_subset = json_config['application']['env']
+        if 'pipeline' in yaml_config and 'env' in yaml_config['pipeline']:
+            yaml_subset = yaml_config['pipeline']['env']
+        elif 'application' in yaml_config and 'env' in yaml_config['application']:
+            yaml_subset = yaml_config['application']['env']
         
-        if json_subset:
-            if 'create-env-file' in json_subset and \
-                     'variables' in json_subset and \
-                     json_subset['create-env-file'] == True:
+        if yaml_subset:
+            if 'create-env-file' in yaml_subset and \
+                     'variables' in yaml_subset and \
+                     yaml_subset['create-env-file'] == True:
                 try:
-                    for entry in json_subset['variables']:
+                    for entry in yaml_subset['variables']:
                         if 'PIPELINE_DIRECTORY' in entry:
                             outfilename = entry['PIPELINE_DIRECTORY'] \
-                                  + '/' + json_subset['env-filename']
+                                  + '/' + yaml_subset['env-filename']
                             with open(outfilename, 'w') as file:
-                                for line in json_subset['variables']:
+                                for line in yaml_subset['variables']:
                                     for key, val in line.items():
                                         print(f'{key}'+'="'+f'{val}'+'"')
                                         file.write(f'{key}'+'="'+f'{val}'+'"\n')
