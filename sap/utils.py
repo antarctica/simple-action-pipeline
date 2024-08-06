@@ -57,6 +57,7 @@ class configuration:
                     print("!! error/undefined PIPELINE_DIRECTORY")
 
 
+
 # BASIC guide
 # import utils
 # c = utils.configuration()
