@@ -6,7 +6,7 @@
 #
 # Main pipeline package that users interact with.
 
-import argparse
+import argparse, os
 
 def perform(pipeline_directory):
     if type(pipeline_directory) != type(list):
@@ -15,8 +15,32 @@ def perform(pipeline_directory):
     try:
         print(''.join(pipeline_directory[0]))
     except:
-        print("Problem openning pipeline directory")
+        print("Problem opening pipeline directory")
+        exit(1)
 
+    #TODO
+    # The very first thing to do is to deduce if the provided directory
+    # is built or not (an unbuilt pipeline directory is no use to anyone).
+    
+    # First handle relative and absolute paths sensibly
+    try:
+        if ''.join(pipeline_directory[0])[0] == '.':
+            print(os.getcwd()+''.join(pipeline_directory[0]).replace('./','/'))
+        elif ''.join(pipeline_directory[0])[0] == '/':
+            print(''.join(pipeline_directory[0]))
+        elif ''.join(pipeline_directory[0]) == '.':
+            print(os.getcwd()+'/')
+        else:
+            print(os.getcwd()+'/'+''.join(pipeline_directory[0]).replace('.',''))
+
+        
+        currentwd = os.getcwd()
+        print(currentwd)
+        cwlisting = os.listdir(currentwd)
+        print(cwlisting)
+    except:
+        print("Problem opening pipeline directory")
+        exit(1)
 
 if __name__ == "__main__":
 
