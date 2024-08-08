@@ -17,7 +17,7 @@ class configuration:
             if os.path.isfile(filepath_in):
                 with open(filepath_in) as yamlfile:
                     data_yaml = yaml.safe_load(yamlfile)
-                    print(data_yaml)
+                    #print(data_yaml)
                     retval = data_yaml
             else:
                 print("!! not a file")
@@ -49,7 +49,7 @@ class configuration:
                             with open(outfilename, 'w') as file:
                                 for line in yaml_subset['variables']:
                                     for key, val in line.items():
-                                        print(f'{key}'+'="'+f'{val}'+'"')
+                                        #print(f'{key}'+'="'+f'{val}'+'"')
                                         file.write(f'{key}'+'="'+f'{val}'+'"\n')
                                         file.write('export '+f'{key}'+'\n')
 
