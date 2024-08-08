@@ -6,41 +6,74 @@
 #
 # Main pipeline package that users interact with.
 
-import argparse, os
+import argparse, os, glob
 
-def perform(pipeline_directory):
+def initial_check(provided_fullpath):
+    '''
+    Check the provided directory to determine if it is a pipeline.
+    An unbuilt pipeline will have yaml files and a wf directory.
+    '''
+    try:
+        # are there yaml files?
+        if os.path.isfile(provided_fullpath + 'application.yaml') and \
+           os.path.isfile(provided_fullpath + 'pipeline.yaml'):
+            # is there a workflow-manager directory?
+            if os.path.isdir(provided_fullpath + 'workflow-manager/'):
+                # is there a python file in the workflow-manager?
+                if len(glob.glob(provided_fullpath + 'workflow-manager/*.py')) > 0:
+                    retval = 'built'
+                else:
+                    retval = 'unbuilt'
+            else:
+                retval = 'unbuilt'
+        else:
+            retval = 'unknown'  
+    except:
+        print("Could not determine status of provided pipeline directory")
+        exit(1)
+    return retval
+
+def perform(pipeline_directory, action):
     if type(pipeline_directory) != type(list):
         pipeline_directory = [pipeline_directory]
-    
-    try:
-        print(''.join(pipeline_directory[0]))
-    except:
-        print("Problem opening pipeline directory")
-        exit(1)
+    # The first element of pipeline_directory should always be the
+    # directory path, everything after that is additional arguments
 
-    #TODO
-    # The very first thing to do is to deduce if the provided directory
-    # is built or not (an unbuilt pipeline directory is no use to anyone).
-    
     # First handle relative and absolute paths sensibly
     try:
         if ''.join(pipeline_directory[0])[0] == '.':
-            print(os.getcwd()+''.join(pipeline_directory[0]).replace('./','/'))
+            pipeline_fullpath = (os.getcwd()+''.join(pipeline_directory[0]).replace('.',''))
         elif ''.join(pipeline_directory[0])[0] == '/':
-            print(''.join(pipeline_directory[0]))
+            pipeline_fullpath = (''.join(pipeline_directory[0]))
         elif ''.join(pipeline_directory[0]) == '.':
-            print(os.getcwd()+'/')
+            pipeline_fullpath = (os.getcwd()+'/')
         else:
-            print(os.getcwd()+'/'+''.join(pipeline_directory[0]).replace('.',''))
-
-        
-        currentwd = os.getcwd()
-        print(currentwd)
-        cwlisting = os.listdir(currentwd)
-        print(cwlisting)
+            pipeline_fullpath = (os.getcwd()+'/'+''.join(pipeline_directory[0]).replace('.',''))
+        if pipeline_fullpath[-1] != '/':
+            pipeline_fullpath += '/'
+        print(pipeline_fullpath)
     except:
         print("Problem opening pipeline directory")
         exit(1)
+
+    # The very first thing to do is to deduce if the provided directory
+    # is built or not (an unbuilt pipeline directory is no use to anyone).
+    pipeline_type = initial_check(pipeline_fullpath)
+    if (pipeline_type == 'unbuilt'):
+        if (action == 'build'):
+            print('here we build the pipeline')
+        else:
+            print('The pipeline does not appear to be built.')
+            print('Please run the pipeline build command.')
+            exit(1)
+
+    print(pipeline_type)
+ 
+        
+    #currentwd = os.getcwd()
+    #print(currentwd)
+    #cwlisting = os.listdir(currentwd)
+    #print(cwlisting)
 
 if __name__ == "__main__":
 
@@ -69,4 +102,4 @@ if __name__ == "__main__":
     if (args.pipedir):
         args.pipeline_directory = args.pipedir
     
-    perform(args.pipeline_directory)
+    perform(args.pipeline_directory, args.action)
