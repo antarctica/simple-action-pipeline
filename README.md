@@ -9,7 +9,7 @@ The simple action pipeline has some standard features which wrap around any appl
 ![simple action pipeline features](assets/img/pipeline-features.png)
 
 ### Installation
-It is recommended that the sap package is installed and used within a python virtual environment. To create a python virtual environment:  
+It is recommended that the sap package is installed and used within a Python virtual environment where the Python version >= 3.9.x . To create a Python virtual environment:  
 ```
 python3 -m venv path_to_new_virtual_env
 ```  
