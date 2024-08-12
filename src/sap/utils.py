@@ -81,6 +81,12 @@ class build:
         '''
         return os.path.isdir(directory_path)
 
+    def __file_exists(self, file_path):
+        '''
+        Check to see is a single file exists.
+        '''
+        return os.path.isfile(file_path)
+
     def __check_config(self, a_yaml):
         '''
         Check that all the scripts referenced in the config yaml exist.
@@ -105,7 +111,7 @@ class build:
                         if self.__directory_exists(a_variable['SCRIPTS_DIRECTORY']):
                             self.app_scripts = a_variable['SCRIPTS_DIRECTORY']
         
-        print(self.app_pipeline, self.pip_pipeline, self.app_scripts)
+        #print(self.app_pipeline, self.pip_pipeline, self.app_scripts)
 
         # Have the essential directories been successfully populated?
         if ( self.pip_pipeline == self.app_pipeline ) and \
@@ -114,6 +120,32 @@ class build:
                 if 'sequence' in this_yaml['application']:
                     yaml_subset = this_yaml['application']['sequence']['sequence']
                     print(yaml_subset)
+                    # Make a list of all the scripts
+                    script_list = []
+                    for a_script in yaml_subset:
+                        if 'script' in a_script:
+                            sub_script = a_script['script']
+                            if 'name' in sub_script:
+                                if sub_script['name'] not in script_list:
+                                    script_list.append(sub_script['name'])
+                            if 'depends' in sub_script:
+                                if type(sub_script['depends']) != type(list()):
+                                    if sub_script['depends'] not in script_list \
+                                         and sub_script['depends'] != '' :
+                                        script_list.append(sub_script['depends'])
+                                else:
+                                    for depend in sub_script['depends']:
+                                        if depend not in script_list and depend != '':
+                                            script_list.append(depend)
+                    # Now check existence for each script file
+                    all_scripts = [ self.__file_exists(self.app_scripts+'/'+a_file) for a_file in script_list ]
+                    #print(all_scripts)
+                    if False in all_scripts:
+                        print("Unable to validate application.yaml")
+                        print("One or more script references unresolved")
+                    else:
+                        # Everything checks out so far so lets build the workflow manager.
+                        print('now we get to build the workflow manager')
 
 
         else:
