@@ -52,9 +52,20 @@ class configuration:
                                         #print(f'{key}'+'="'+f'{val}'+'"')
                                         file.write(f'{key}'+'="'+f'{val}'+'"\n')
                                         file.write('export '+f'{key}'+'\n')
+                                
+                                # activate the python environment at the end of the env file
+                                if 'pipeline' in yaml_config and 'python-env' in yaml_config['pipeline']:
+                                    python_env_activate = yaml_config['pipeline']['python-env']
+                                    print(python_env_activate)
+                                    file.write('source '+f'{python_env_activate}'+'\n')
 
                 except:
                     print("!! error/undefined PIPELINE_DIRECTORY")
+
+                
+        
+        
+
 
 
 
