@@ -56,14 +56,69 @@ class configuration:
                                 # activate the python environment at the end of the env file
                                 if 'pipeline' in yaml_config and 'python-env' in yaml_config['pipeline']:
                                     python_env_activate = yaml_config['pipeline']['python-env']
-                                    print(python_env_activate)
+                                    #print(python_env_activate)
                                     file.write('source '+f'{python_env_activate}'+'\n')
 
                 except:
                     print("!! error/undefined PIPELINE_DIRECTORY")
 
                 
+class build:
+    '''
+    Used to build the pipeline from YAML configurations.
+    '''
+    def __init__(self, configuration_yamls: list):
+        self.configs = configuration_yamls
+        self.app_pipeline = None
+        self.pip_pipeline = None
+        self.app_scripts  = None
+        for a_config in self.configs:
+            self.__check_config(a_config)
+
+    def __directory_exists(self, directory_path):
+        '''
+        Check to see is a single directory exists.
+        '''
+        return os.path.isdir(directory_path)
+
+    def __check_config(self, a_yaml):
+        '''
+        Check that all the scripts referenced in the config yaml exist.
+        '''
+        this_yaml = a_yaml
+        # First check that the pipeline directories are referenced and exists.
+        if 'pipeline' in this_yaml or 'application' in this_yaml:
+            conf_type = list(this_yaml.keys())[0]
+            if 'env' in this_yaml[conf_type] and \
+                'variables' in this_yaml[conf_type]['env']:
+                yaml_subset = this_yaml[conf_type]['env']['variables']
+                #print("it's all there", yaml_subset)
+                for a_variable in yaml_subset:
+                    if 'PIPELINE_DIRECTORY' in a_variable.keys():
+                        if self.__directory_exists(a_variable['PIPELINE_DIRECTORY']):
+                            if conf_type == 'application':
+                                self.app_pipeline = a_variable['PIPELINE_DIRECTORY']
+                            if conf_type == 'pipeline':
+                                self.pip_pipeline = a_variable['PIPELINE_DIRECTORY']
+                    # Then check that the scripts directory is references and exists.
+                    if 'SCRIPTS_DIRECTORY' in a_variable.keys():
+                        if self.__directory_exists(a_variable['SCRIPTS_DIRECTORY']):
+                            self.app_scripts = a_variable['SCRIPTS_DIRECTORY']
         
+        print(self.app_pipeline, self.pip_pipeline, self.app_scripts)
+
+        # Have the essential directories been successfully populated?
+        if ( self.pip_pipeline == self.app_pipeline ) and \
+             self.app_scripts != None:
+            if 'application' in this_yaml:
+                if 'sequence' in this_yaml['application']:
+                    yaml_subset = this_yaml['application']['sequence']['sequence']
+                    print(yaml_subset)
+
+
+        else:
+            print("Unable to validate application.yaml or pipeline.yaml")
+            print("Pipeline/Script references may not match or exist.")
         
 
 

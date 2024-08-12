@@ -67,6 +67,10 @@ def perform(pipeline_directory, action):
             yaml_application = conf.yaml_ingest(pipeline_fullpath + 'application.yaml')
             conf.create_envfile(yaml_pipeline)
             conf.create_envfile(yaml_application)
+            #TODO check that all application scripts exist
+            bld_pipeline = utils.build([yaml_pipeline, yaml_application])
+            #TODO create workflow-manager directory
+            #TODO populate workflow-manager directory
         else:
             print('The pipeline does not appear to be built.')
             print('Please run the pipeline build command.')
