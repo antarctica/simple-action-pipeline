@@ -1,7 +1,7 @@
 ---
 pipeline:
 
-    name: basic-example
+    name: simple
     description: pipeline configuration file for the basic-example pipeline
 
     env:

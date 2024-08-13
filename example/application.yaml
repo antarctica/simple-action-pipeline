@@ -1,7 +1,7 @@
 ---
 application:
 
-    name: basic-example
+    name: example
     description: application configuration file for the basic-example pipeline
 
     env:

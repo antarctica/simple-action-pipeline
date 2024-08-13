@@ -1,5 +1,6 @@
 import yaml
 import os
+import jugcreate
 
 class configuration:
     '''
@@ -69,6 +70,8 @@ class build:
     '''
     def __init__(self, configuration_yamls: list):
         self.configs = configuration_yamls
+        self.pipeline_yaml = None
+        self.application_yaml = None
         self.wfman = 'workflow-manager'
         self.app_pipeline = None
         self.pip_pipeline = None
@@ -94,7 +97,29 @@ class build:
             print("Unable to configure underlying workflow manager")
             retval = False
         return retval
-    
+
+    def __construct_jugfile(self):
+        '''
+        Using the provided pipeline.yaml and application.yaml, construct
+        and write the jugfile
+        '''
+        for single_config in self.configs:
+            if 'pipeline' in single_config.keys():
+                self.pipeline_yaml = single_config
+            elif 'application' in single_config.keys():
+                self.application_yaml = single_config
+            else:
+                pass
+        
+        pipeyaml = self.pipeline_yaml; appyaml = self.application_yaml
+
+        if self.pipeline_yaml != None and self.application_yaml != None:
+            jugfile_name = pipeyaml['pipeline']['name'] + '-' + \
+            appyaml['application']['name'] + '.py'
+            print(self.pip_pipeline + '/' + self.wfman + '/' + jugfile_name)
+            test = jugcreate.jugcreate(self.configs, (self.pip_pipeline + '/' + self.wfman + '/' + jugfile_name) )
+        return True
+
     def __build_workflow_manager(self):
         '''
         Build the workflow-manager directory from scratch.
@@ -110,10 +135,12 @@ class build:
             if ( self.__configure_jug() != True ):
                 retval = False
             else:
-                retval = True
+                # construct and write the jugfile
+                retval = self.__construct_jugfile()
 
         except:
             retval = False
+        
         return retval
 
     def __pre_build_check(self):
