@@ -11,7 +11,7 @@ import argparse, os, glob, utils
 def initial_check(provided_fullpath):
     '''
     Check the provided directory to determine if it is a pipeline.
-    An unbuilt pipeline will have yaml files and a wf directory.
+    An unbuilt pipeline will have yaml files but no wf directory.
     '''
     try:
         # are there yaml files?

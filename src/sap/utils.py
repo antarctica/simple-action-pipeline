@@ -80,6 +80,21 @@ class build:
         if self.__pre_build_check():
             self.build_ready = self.__build_workflow_manager()
 
+    def __configure_jug(self):
+        '''
+        The Jug package is automatically configured for
+        consistent behaviour across pipelines.
+        '''
+        try:
+            #re-write the user's jugrc config file
+            os.system("mkdir -p $HOME/.config")
+            os.system("echo $'[main]\njugdir=recent.%(jugfile)s\nwill_cite=True\n' > $HOME/.config/jugrc")
+            retval = True
+        except:
+            print("Unable to configure underlying workflow manager")
+            retval = False
+        return retval
+    
     def __build_workflow_manager(self):
         '''
         Build the workflow-manager directory from scratch.
@@ -91,9 +106,11 @@ class build:
                 os.system(command)
             
             os.mkdir(self.pip_pipeline + '/' + self.wfman)
-            #TODO here I need to make sure that JUG (the workflow manager)
-            # is configured correctly.
-            retval = True
+            # Standardise the configuration of JUG.
+            if ( self.__configure_jug() != True ):
+                retval = False
+            else:
+                retval = True
 
         except:
             retval = False
