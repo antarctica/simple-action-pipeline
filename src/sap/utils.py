@@ -69,11 +69,47 @@ class build:
     '''
     def __init__(self, configuration_yamls: list):
         self.configs = configuration_yamls
+        self.wfman = 'workflow-manager'
         self.app_pipeline = None
         self.pip_pipeline = None
         self.app_scripts  = None
+        self.build_ready  = False
+
         for a_config in self.configs:
             self.__check_config(a_config)
+        if self.__pre_build_check():
+            self.build_ready = self.__build_workflow_manager()
+
+    def __build_workflow_manager(self):
+        '''
+        Build the workflow-manager directory from scratch.
+        '''
+        try: 
+            if self.__directory_exists(self.pip_pipeline + '/' + self.wfman):
+                print("Erasing previous workflow-manager")
+                command = 'rm -rf ' + self.pip_pipeline + '/' + self.wfman
+                os.system(command)
+            
+            os.mkdir(self.pip_pipeline + '/' + self.wfman)
+            #TODO here I need to make sure that JUG (the workflow manager)
+            # is configured correctly.
+            retval = True
+
+        except:
+            retval = False
+        return retval
+
+    def __pre_build_check(self):
+        '''
+        Once the config(s) have been loaded, we check that everything
+        is ready for the build process.
+        '''
+        if ( self.app_pipeline == self.pip_pipeline ):
+            retval = False
+            if ( self.app_scripts != None ):
+                print("Ready to build workflow-manager")
+                retval = True
+        return retval
 
     def __directory_exists(self, directory_path):
         '''
@@ -119,7 +155,7 @@ class build:
             if 'application' in this_yaml:
                 if 'sequence' in this_yaml['application']:
                     yaml_subset = this_yaml['application']['sequence']['sequence']
-                    print(yaml_subset)
+                    #print(yaml_subset)
                     # Make a list of all the scripts
                     script_list = []
                     for a_script in yaml_subset:
@@ -141,16 +177,13 @@ class build:
                     all_scripts = [ self.__file_exists(self.app_scripts+'/'+a_file) for a_file in script_list ]
                     #print(all_scripts)
                     if False in all_scripts:
+                        self.app_scripts = None
                         print("Unable to validate application.yaml")
                         print("One or more script references unresolved")
                     else:
                         # Everything checks out so far so lets build the workflow manager.
-                        print('now we get to build the workflow manager')
+                        print('Configuration Checks Complete')
 
-
-        else:
-            print("Unable to validate application.yaml or pipeline.yaml")
-            print("Pipeline/Script references may not match or exist.")
         
 
 
