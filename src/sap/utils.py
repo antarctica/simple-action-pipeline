@@ -1,6 +1,6 @@
 import yaml
 import os
-import jugcreate
+from jugcreate import jugcreate
 
 class configuration:
     '''
@@ -116,8 +116,8 @@ class build:
         if self.pipeline_yaml != None and self.application_yaml != None:
             jugfile_name = pipeyaml['pipeline']['name'] + '-' + \
             appyaml['application']['name'] + '.py'
-            print(self.pip_pipeline + '/' + self.wfman + '/' + jugfile_name)
-            test = jugcreate.jugcreate(self.configs, (self.pip_pipeline + '/' + self.wfman + '/' + jugfile_name) )
+            jugcreate(self.pipeline_yaml, self.application_yaml, \
+                (self.pip_pipeline + '/' + self.wfman + '/' + jugfile_name) )
         return True
 
     def __build_workflow_manager(self):

@@ -33,6 +33,28 @@ def initial_check(provided_fullpath):
         exit(1)
     return retval
 
+def perform_decision(pipeline_type, action, pipeline_fullpath):
+    if (pipeline_type == 'unbuilt'):
+        if (action == 'build'):
+            print('here we build the pipeline')
+            conf = utils.configuration()
+            yaml_pipeline = conf.yaml_ingest(pipeline_fullpath + 'pipeline.yaml')
+            yaml_application = conf.yaml_ingest(pipeline_fullpath + 'application.yaml')
+            conf.create_envfile(yaml_pipeline)
+            conf.create_envfile(yaml_application)
+            bld_pipeline = utils.build([yaml_pipeline, yaml_application])
+            #TODO create workflow-manager directory
+            #TODO populate workflow-manager directory
+        else:
+            print('The pipeline does not appear to be built.')
+            print('Please run the pipeline build command.')
+            exit(1)
+    if (pipeline_type == 'built'):
+        if (action == 'build'):
+            resp = input('The pipeline is already built, would you like to rebuild it? ')
+            if resp == 'Y' or resp == 'y':
+                perform_decision('unbuilt', 'build', pipeline_fullpath)
+
 def perform(pipeline_directory, action):
     if type(pipeline_directory) != type(list):
         pipeline_directory = [pipeline_directory]
@@ -56,28 +78,8 @@ def perform(pipeline_directory, action):
         print("Problem opening pipeline directory")
         exit(1)
 
-    # The very first thing to do is to deduce if the provided directory
-    # is built or not (an unbuilt pipeline directory is no use to anyone).
     pipeline_type = initial_check(pipeline_fullpath)
-    if (pipeline_type == 'unbuilt'):
-        if (action == 'build'):
-            print('here we build the pipeline')
-            conf = utils.configuration()
-            yaml_pipeline = conf.yaml_ingest(pipeline_fullpath + 'pipeline.yaml')
-            yaml_application = conf.yaml_ingest(pipeline_fullpath + 'application.yaml')
-            conf.create_envfile(yaml_pipeline)
-            conf.create_envfile(yaml_application)
-            bld_pipeline = utils.build([yaml_pipeline, yaml_application])
-            #TODO create workflow-manager directory
-            #TODO populate workflow-manager directory
-        else:
-            print('The pipeline does not appear to be built.')
-            print('Please run the pipeline build command.')
-            exit(1)
-    if (pipeline_type == 'built'):
-        if (action == 'build'):
-            print('The pipeline is already built, would you like to rebuild it?')
-
+    perform_decision(pipeline_type, action, pipeline_fullpath)
     print(pipeline_type)
  
         
