@@ -10,16 +10,36 @@ from datetime import datetime
 from os import environ
 import subprocess
 """
-    
+    STANDARD_PSTART = """
+@TaskGenerator
+def _00_start_pipeline():
+    print(datetime.now(), "| started pipeline")
+    subprocess.call('jug status ' + '/workflow-manager/', shell=True) 
+    return datetime.now()
+"""
+
+    STANDARD_PFINISH = """
+@TaskGenerator
+def _00_finish_pipeline():
+    print(datetime.now(), "| finished pipeline")
+    subprocess.call('jug status ' + '/workflow-manager/', shell=True)  
+    return datetime.now()
+"""   
 
     def __init__(self, pipeline_yaml, application_yaml, jugfilepath):
         self.pipeline_yaml = pipeline_yaml
         self.application_yaml = application_yaml
         self.jugfilepath = jugfilepath
         self.jugfilenew = False
+        self.tasknumber = 0
         print("Building new workflow-manager")
         self.jugfilenew = self.__create_new_file(self.jugfilepath)
-        self.__task_write(self.jugfilepath, self.__task_extract(self.application_yaml))
+        self.__task_start_finish(self.tasknumber, self.jugfilepath)
+        self.jugtasks = self.__task_extract(self.application_yaml)
+        self.__task_write(self.jugfilepath, self.jugtasks)
+        self.__task_start_finish(self.tasknumber, self.jugfilepath)
+        self.__start_exec(self.jugfilepath)
+        self.__task_exec(self.jugfilepath, self.jugtasks)
 
     
     def __create_new_file(self, filepath):
@@ -44,6 +64,50 @@ import subprocess
         except:
             return False
         
+    def __task_start_finish(self, tasknum, jugfilepath):
+        '''
+        Populates additional start and end tasks into the
+        workflow-manager jugfile.
+        '''
+        if tasknum == 0:
+            wrt_data = self.STANDARD_PSTART
+        else:
+            wrt_data = self.STANDARD_PFINISH.replace( \
+                        '_00_', '_'+f"{tasknum+1:02d}"+'_')
+            wrt_data = wrt_data + '\n\n'
+        
+        wrt_data = wrt_data.replace('/workflow-manager/',
+                                            jugfilepath)
+        self.__add_to_jugfile(jugfilepath, wrt_data)
+
+    def __start_exec(self, jugfilepath):
+        self.__add_to_jugfile(jugfilepath, "pipeline_directory = environ['PIPELINE_DIRECTORY']")
+        self.__add_to_jugfile(jugfilepath, "start_output = _00_start_pipeline()")
+        self.__add_to_jugfile(jugfilepath, "\nif start_output:\n")
+    
+    def __task_exec(self, jugfilepath, jugtasks):
+        '''
+        if results:
+            downcomplete = _03check_downloads_complete([results, ])
+        '''
+        newtasks = []
+        for task in jugtasks:
+            print(len(task))
+            if len(task) < 3:
+                subtask = task + ['start_output']
+            else:
+                subtask = task
+            print(subtask)
+            newtasks.append(subtask)
+        
+        for task in newtasks:
+            wrt_data  = "    " + task[0].replace('.','_') + "_output = "
+            wrt_data += task[1] + "([])\n"
+            self.__add_to_jugfile(jugfilepath, wrt_data)
+        
+        print(newtasks)
+
+
     def __task_extract(self, yaml) -> list:
         '''
         Extracts the information needed to create individual jug
@@ -53,6 +117,7 @@ import subprocess
             seq = yaml['application']['sequence']['sequence']
             seq_out = []
             for n, script in enumerate(seq):
+                self.tasknumber = n + 1
                 tmp_list = []
                 tmp_list.append(script['script']['name'])
                 tmp_list.append('_'+f"{n+1:02d}"+'_'+script['script']['name'].replace('.', '_'))
