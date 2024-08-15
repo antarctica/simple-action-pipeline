@@ -74,38 +74,53 @@ def _00_finish_pipeline():
         else:
             wrt_data = self.STANDARD_PFINISH.replace( \
                         '_00_', '_'+f"{tasknum+1:02d}"+'_')
-            wrt_data = wrt_data + '\n\n'
+            wrt_data = wrt_data + '\n'
         
         wrt_data = wrt_data.replace('/workflow-manager/',
                                             jugfilepath)
         self.__add_to_jugfile(jugfilepath, wrt_data)
 
     def __start_exec(self, jugfilepath):
-        self.__add_to_jugfile(jugfilepath, "pipeline_directory = environ['PIPELINE_DIRECTORY']")
+        self.__add_to_jugfile(jugfilepath, "pipeline_directory = environ['PIPELINE_DIRECTORY']\n\n")
         self.__add_to_jugfile(jugfilepath, "start_output = _00_start_pipeline()")
         self.__add_to_jugfile(jugfilepath, "\nif start_output:\n")
     
     def __task_exec(self, jugfilepath, jugtasks):
-        '''
-        if results:
-            downcomplete = _03check_downloads_complete([results, ])
-        '''
+        # make the first real task depend on the start pipeline task
         newtasks = []
         for task in jugtasks:
-            print(len(task))
             if len(task) < 3:
                 subtask = task + ['start_output']
             else:
                 subtask = task
-            print(subtask)
             newtasks.append(subtask)
-        
-        for task in newtasks:
+        # write each task execution to the jugfile
+        for next, task in enumerate(newtasks):
+            dependencies = ''
+            for dep in task[2:]:
+                dependencies += str(dep + ', ')
             wrt_data  = "    " + task[0].replace('.','_') + "_output = "
-            wrt_data += task[1] + "([])\n"
+            wrt_data += task[1] + "([" + dependencies + "])\n\n"
             self.__add_to_jugfile(jugfilepath, wrt_data)
-        
-        print(newtasks)
+            # construct the if statements
+            if next <= len(newtasks) - 2:
+                nextif = newtasks[next + 1][2:]
+                if len(nextif) == 1:
+                    self.__add_to_jugfile(jugfilepath, "if " + nextif[0] + ":\n")
+                else:
+                    multideps = ''
+                    for dependency_single in nextif:
+                        multideps += str(dependency_single + ' and ')
+                    multideps = multideps[:-5]
+                    self.__add_to_jugfile(jugfilepath, "if " + multideps + ":\n")
+                    print(multideps)
+        # after the real tasks, add the finish task
+        all_scripts = [task[0] for task in newtasks] # list all script names
+        #all_dependencies = 
+        print(newtasks)     
+        #TODO make a list of all dependencies
+        #TODO make a list of all scripts
+        #TODO any scripts not listed as a dependency become the dependency for the finish task
 
 
     def __task_extract(self, yaml) -> list:
