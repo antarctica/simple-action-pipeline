@@ -1,5 +1,8 @@
 # package
 *activate
+*.env
+example/workflow-manager
+example/workflow-manager/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
