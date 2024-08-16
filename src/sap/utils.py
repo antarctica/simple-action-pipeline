@@ -1,6 +1,8 @@
 import yaml
 import os
+import shutil
 from jugcreate import jugcreate
+from setup_logging import logger
 
 class configuration:
     '''
@@ -18,13 +20,13 @@ class configuration:
             if os.path.isfile(filepath_in):
                 with open(filepath_in) as yamlfile:
                     data_yaml = yaml.safe_load(yamlfile)
-                    #print(data_yaml)
+                    logger.info("Loaded configuration: %s", filepath_in)
                     retval = data_yaml
             else:
-                print("!! not a file")
+                logger.error("Path %s is not a file.")
+                exit(1)
         else:
-            print("!! no file")
-        
+            logger.error("Path %s does not exist.")
         return retval
     
     def create_envfile(self, yaml_config):
@@ -59,9 +61,8 @@ class configuration:
                                 #     python_env_activate = yaml_config['pipeline']['python-env']
                                 #     #print(python_env_activate)
                                 #     file.write('source '+f'{python_env_activate}'+'\n')
-
                 except:
-                    print("!! error/undefined PIPELINE_DIRECTORY")
+                    logger.error("!! error/undefined PIPELINE_DIRECTORY")
 
                 
 class build:
@@ -94,7 +95,7 @@ class build:
             os.system("echo $'[main]\njugdir=recent.%(jugfile)s\nwill_cite=True\n' > $HOME/.config/jugrc")
             retval = True
         except:
-            print("Unable to configure underlying workflow manager")
+            logger.error("Unable to configure JUG workflow manager")
             retval = False
         return retval
 
@@ -126,21 +127,28 @@ class build:
         '''
         try: 
             if self.__directory_exists(self.pip_pipeline + '/' + self.wfman):
-                print("Erasing previous workflow-manager")
-                command = 'rm -rf ' + self.pip_pipeline + '/' + self.wfman
-                os.system(command)
+                logger.info("Erasing any previous workflow-manager")
+                shutil.rmtree(self.pip_pipeline + '/' + self.wfman)
+                #command = 'rm -rf ' + self.pip_pipeline + '/' + self.wfman
+                #os.system(command)
             
             os.mkdir(self.pip_pipeline + '/' + self.wfman)
             # Standardise the configuration of JUG.
+            logger.info("Configuring JUG workflow manager for standard behaviour.")
+
             if ( self.__configure_jug() != True ):
+                logger.warning("Unable to configure JUG with ~/.config/jugrc file.")
                 retval = False
+
             else:
                 # construct and write the jugfile
+                logger.info("Building workflow manager from configuration files.")
                 retval = self.__construct_jugfile()
 
         except:
+            logger.error("Failed to successfully build the workflow manager")
             retval = False
-        
+
         return retval
 
     def __pre_build_check(self):
@@ -151,8 +159,10 @@ class build:
         if ( self.app_pipeline == self.pip_pipeline ):
             retval = False
             if ( self.app_scripts != None ):
-                print("Ready to build workflow-manager")
+                logger.info("Preparing to build workflow-manager")
                 retval = True
+            else:
+                logger.error("No application scripts defined. Aborting build.")
         return retval
 
     def __directory_exists(self, directory_path):
@@ -172,6 +182,7 @@ class build:
         Check that all the scripts referenced in the config yaml exist.
         '''
         this_yaml = a_yaml
+        logger.info("Checking %s configuration file.", tuple(this_yaml.keys())[0])
         # First check that the pipeline directories are referenced and exists.
         if 'pipeline' in this_yaml or 'application' in this_yaml:
             conf_type = list(this_yaml.keys())[0]
@@ -190,8 +201,6 @@ class build:
                     if 'SCRIPTS_DIRECTORY' in a_variable.keys():
                         if self.__directory_exists(a_variable['SCRIPTS_DIRECTORY']):
                             self.app_scripts = a_variable['SCRIPTS_DIRECTORY']
-        
-        #print(self.app_pipeline, self.pip_pipeline, self.app_scripts)
 
         # Have the essential directories been successfully populated?
         if ( self.pip_pipeline == self.app_pipeline ) and \
@@ -222,33 +231,10 @@ class build:
                     #print(all_scripts)
                     if False in all_scripts:
                         self.app_scripts = None
-                        print("Unable to validate application.yaml")
-                        print("One or more script references unresolved")
+                        logger.error("Unable to validate application configuration file")
+                        logger.error("One or more script references unresolved")
+                        exit(1)
                     else:
                         # Everything checks out so far so lets build the workflow manager.
-                        print('Configuration Checks Complete')
+                        logger.info("Configuration Checks Complete")
 
-        
-
-
-
-
-# BASIC guide
-# import utils
-# c = utils.configuration()
-# vals = c.json_ingest("/data/hpcdata/users/matsco/simple-action-pipeline/example/pipeline.json")
-# c.create_envfile(vals)  # <- for pipeline.env
-# vals = c.json_ingest("/data/hpcdata/users/matsco/simple-action-pipeline/example/application.json")
-# c.create_envfile(vals)  # <- for application.env
-
-def add(a, b):
-    return a+b
-
-def subtract(a, b):
-    return a-b
-
-def mutiply(a, b):
-    return a*b
-
-def divide(a, b):
-    return a/b

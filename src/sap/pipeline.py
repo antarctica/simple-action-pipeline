@@ -6,7 +6,11 @@
 #
 # Main pipeline package that users interact with.
 
-import argparse, os, glob, utils
+import argparse
+import os
+import glob
+import subprocess
+import utils
 
 def initial_check(provided_fullpath):
     '''
@@ -29,33 +33,50 @@ def initial_check(provided_fullpath):
         else:
             retval = 'unknown'  
     except:
-        print("Could not determine status of provided pipeline directory")
+        logger.error("Could not determine status of provided pipeline directory")
         exit(1)
     return retval
 
-def perform_decision(pipeline_type, action, pipeline_fullpath):
+def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
     if (pipeline_type == 'unbuilt'):
         if (action == 'build'):
-            print('here we build the pipeline')
+            logger.info("Build process started")
             conf = utils.configuration()
+            logger.info("Loading configuration files")
             yaml_pipeline = conf.yaml_ingest(pipeline_fullpath + 'pipeline.yaml')
             yaml_application = conf.yaml_ingest(pipeline_fullpath + 'application.yaml')
+            logger.info("Creating .env files")
             conf.create_envfile(yaml_pipeline)
             conf.create_envfile(yaml_application)
             bld_pipeline = utils.build([yaml_pipeline, yaml_application])
-            #TODO create workflow-manager directory
-            #TODO populate workflow-manager directory
         else:
-            print('The pipeline does not appear to be built.')
-            print('Please run the pipeline build command.')
+            logger.info("The pipeline does not appear to be built.")
+            logger.info("Please run the pipeline build command. see pipeline --help")
             exit(1)
+        
     if (pipeline_type == 'built'):
         if (action == 'build'):
-            resp = input('The pipeline is already built, would you like to rebuild it? ')
+            if rebuild:
+                logger.info("The pipeline is already built - Forcing rebuild")
+                resp = 'Y'
+            else:
+                logger.info("Rebuild decision required.")
+                resp = input('The pipeline is already built, would you like to rebuild it? ')
             if resp == 'Y' or resp == 'y':
-                perform_decision('unbuilt', 'build', pipeline_fullpath)
+                perform_decision('unbuilt', 'build', pipeline_fullpath, True)
+        
+        elif (action == 'status'):
+            current = os.getcwd()
+            os.chdir(pipeline_fullpath)
+            os.system("bash source pipeline.env")
+            os.system("bash source application.env")
+            os.chdir(pipeline_fullpath + '/workflow-manager')
+            if len(glob.glob('*.py')) == 1:
+                logger.info(str(os.listdir()[0]))
+                subprocess.call(["jug", "status", str(os.listdir()[0])])
+            os.chdir(current)
 
-def perform(pipeline_directory, action):
+def perform(pipeline_directory, action, rebuild):
     if type(pipeline_directory) != type(list):
         pipeline_directory = [pipeline_directory]
     # The first element of pipeline_directory should always be the
@@ -73,14 +94,15 @@ def perform(pipeline_directory, action):
             pipeline_fullpath = (os.getcwd()+'/'+''.join(pipeline_directory[0]).replace('.',''))
         if pipeline_fullpath[-1] != '/':
             pipeline_fullpath += '/'
-        print(pipeline_fullpath)
+        logger.info("Target: %s", pipeline_fullpath)
     except:
-        print("Problem opening pipeline directory")
+        logger.error("Unrecognised pipeline directory path")
         exit(1)
 
     pipeline_type = initial_check(pipeline_fullpath)
-    perform_decision(pipeline_type, action, pipeline_fullpath)
-    print(pipeline_type)
+    perform_decision(pipeline_type, action, pipeline_fullpath, rebuild)
+    logger.info("Pipeline Status: %s", pipeline_type)
+    logger.info("Finished")
  
         
     #currentwd = os.getcwd()
@@ -94,13 +116,15 @@ if __name__ == "__main__":
     pipeline entry point
     this entry point relies on being pointed to a pipeline directory
     """
-
+    from setup_logging import logger
+    
     parser = argparse.ArgumentParser(description='perform action with simple-action-pipeline by supplying a pipeline directory')
     parser.add_argument("action", help="Action for the pipeline to perform. \
                         options are 'build', 'status', 'execute', 'reset', 'halt'.", \
                             type=str, choices=['build', 'status', 'execute', 'reset', 'halt'])
     parser.add_argument("pipeline_directory", help="Pipeline directory to use", nargs="*", default="./")
     parser.add_argument("-d", "--directory", help="Pipeline directory", action="store", dest='pipedir')
+    parser.add_argument("-f", "--force-rebuild", help="Force building the pipeline that is already built.", action="store_true", dest='rebuild', default=False)
     args = parser.parse_args()
 
 
@@ -108,11 +132,10 @@ if __name__ == "__main__":
 
     # What to do if no pipeline directory was supplied
     if (not args.pipedir) and (not args.pipeline_directory):
-        print ("WARN. No pipeline directory provided.\n \
-                Attempting to use current directory as pipeline.")
+        logger.warning("No pipeline directory provided. Attempting to use current directory as pipeline.")
 
     # Keyword switch takes priority over positional switch
     if (args.pipedir):
         args.pipeline_directory = args.pipedir
     
-    perform(args.pipeline_directory, args.action)
+    perform(args.pipeline_directory, args.action, args.rebuild)

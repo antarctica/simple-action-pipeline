@@ -1,4 +1,5 @@
 from pathlib import Path
+from setup_logging import logger
 
 class jugcreate:
     '''
@@ -33,14 +34,16 @@ def _00_finish_pipeline(finish_times: list):
         self.jugfilepath = jugfilepath
         self.jugfilenew = False
         self.tasknumber = 0
-        print("Building new workflow-manager")
+        logger.info("Building new workflow-manager")
         self.jugfilenew = self.__create_new_file(self.jugfilepath)
+        logger.info("Writing JUGfile %s ", Path(jugfilepath).name)
         self.__task_start_finish(self.tasknumber, self.jugfilepath)
         self.jugtasks = self.__task_extract(self.application_yaml)
         self.__task_write(self.jugfilepath, self.jugtasks)
         self.__task_start_finish(self.tasknumber, self.jugfilepath)
         self.__start_exec(self.jugfilepath)
         self.__task_exec(self.jugfilepath, self.jugtasks)
+        logger.info("Exiting build process.")
 
     
     def __create_new_file(self, filepath):
@@ -56,6 +59,9 @@ def _00_finish_pipeline(finish_times: list):
             return False
     
     def __add_to_jugfile(self, filepath, addition):
+        '''
+        Adds one or more lines to the current jugfile being written.
+        '''
         try:
             if addition[-1] != '\n':
                 addition += '\n'
@@ -77,7 +83,6 @@ def _00_finish_pipeline(finish_times: list):
                         '_00_', '_'+f"{tasknum+1:02d}"+'_')
             wrt_data = wrt_data + '\n'
         
-        print(Path(jugfilepath).name)
         wrt_data = wrt_data.replace("'/workflow-manager/'",
                 "pipeline_directory + '/workflow-manager/" + Path(jugfilepath).name + "'")
         self.__add_to_jugfile(jugfilepath, wrt_data)
