@@ -67,9 +67,8 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
         
         elif (action == 'status'):
             current = os.getcwd()
-            os.chdir(pipeline_fullpath)
-            os.system("bash source pipeline.env")
-            os.system("bash source application.env")
+            os.system("source %s/pipeline.env" % pipeline_fullpath)
+            os.system("source %s/application.env" % pipeline_fullpath)
             os.chdir(pipeline_fullpath + '/workflow-manager')
             if len(glob.glob('*.py')) == 1:
                 logger.info(str(os.listdir()[0]))
