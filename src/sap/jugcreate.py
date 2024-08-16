@@ -1,3 +1,4 @@
+from pathlib import Path
 
 class jugcreate:
     '''
@@ -20,7 +21,7 @@ def _00_start_pipeline():
 
     STANDARD_PFINISH = """
 @TaskGenerator
-def _00_finish_pipeline():
+def _00_finish_pipeline(finish_times: list):
     print(datetime.now(), "| finished pipeline")
     subprocess.call('jug status ' + '/workflow-manager/', shell=True)  
     return datetime.now()
@@ -76,12 +77,14 @@ def _00_finish_pipeline():
                         '_00_', '_'+f"{tasknum+1:02d}"+'_')
             wrt_data = wrt_data + '\n'
         
-        wrt_data = wrt_data.replace('/workflow-manager/',
-                                            jugfilepath)
+        print(Path(jugfilepath).name)
+        wrt_data = wrt_data.replace("'/workflow-manager/'",
+                "pipeline_directory + '/workflow-manager/" + Path(jugfilepath).name + "'")
         self.__add_to_jugfile(jugfilepath, wrt_data)
 
     def __start_exec(self, jugfilepath):
-        self.__add_to_jugfile(jugfilepath, "pipeline_directory = environ['PIPELINE_DIRECTORY']\n\n")
+        self.__add_to_jugfile(jugfilepath, "pipeline_directory = environ['PIPELINE_DIRECTORY']\n")
+        self.__add_to_jugfile(jugfilepath, "scripts_directory = environ['SCRIPTS_DIRECTORY']\n\n")
         self.__add_to_jugfile(jugfilepath, "start_output = _00_start_pipeline()")
         self.__add_to_jugfile(jugfilepath, "\nif start_output:\n")
     
@@ -113,14 +116,24 @@ def _00_finish_pipeline():
                         multideps += str(dependency_single + ' and ')
                     multideps = multideps[:-5]
                     self.__add_to_jugfile(jugfilepath, "if " + multideps + ":\n")
-                    print(multideps)
+
         # after the real tasks, add the finish task
-        all_scripts = [task[0] for task in newtasks] # list all script names
-        #all_dependencies = 
-        print(newtasks)     
-        #TODO make a list of all dependencies
-        #TODO make a list of all scripts
-        #TODO any scripts not listed as a dependency become the dependency for the finish task
+        all_scripts = [task[0].replace('.','_')+'_output' for task in newtasks] # list all script names
+        all_dependencies = [dep for row in newtasks for dep in row[2:]] # list all dependencies
+        final_dependencies = [orphan for orphan in all_scripts if orphan not in all_dependencies]
+        finaldeps = ''
+        if len(final_dependencies) == 1:
+                    self.__add_to_jugfile(jugfilepath, "if " + final_dependencies[0] + ":\n")
+                    finaldeps += str(final_dependencies[0] + ', ')
+        else:
+            multideps = ''
+            for dependency_single in final_dependencies:
+                multideps += str(dependency_single + ' and ')
+                finaldeps += str(dependency_single + ', ')
+            multideps = multideps[:-5]
+            self.__add_to_jugfile(jugfilepath, "if " + multideps + ":\n")
+        self.__add_to_jugfile(jugfilepath, "    _" + f"{self.tasknumber+1:02d}" +
+                              "_finish_pipeline([" + finaldeps + "])\n")
 
 
     def __task_extract(self, yaml) -> list:
@@ -155,8 +168,8 @@ def _00_finish_pipeline():
                 self.__add_to_jugfile(filepath,
                   '    print(datetime.now(), "| started '+a_task[1]+'")\n')
                 self.__add_to_jugfile(filepath,
-                  "    subprocess.call('bash ' + pipeline_directory + " +
-                  "'/scripts/"+a_task[0]+"', shell=True)\n")
+                  "    subprocess.call('bash ' + scripts_directory + " +
+                  "'/"+a_task[0]+"', shell=True)\n")
                 self.__add_to_jugfile(filepath,
                   '    print(datetime.now(), "| finished '+a_task[1]+'")\n')
                 self.__add_to_jugfile(filepath, 
