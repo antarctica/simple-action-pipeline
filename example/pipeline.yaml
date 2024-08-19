@@ -11,7 +11,7 @@ pipeline:
         env-filename: pipeline.env
 
         variables:
-        - PIPELINE_DIRECTORY: "/data/hpcdata/users/matsco/simple-action-pipeline/example"
+        - PIPELINE_DIRECTORY: "./"
         - PIPELINE_MAXWORKERS: 2
         - PIPELINE_ACTIVEHOURS: 9 10 11 12 13 14 15
     

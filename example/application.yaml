@@ -11,10 +11,10 @@ application:
         env-filename: application.env
 
         variables:
-        - PIPELINE_DIRECTORY: "/data/hpcdata/users/matsco/simple-action-pipeline/example"
-        - SCRIPTS_DIRECTORY: "/data/hpcdata/users/matsco/simple-action-pipeline/example/scripts"
-        - APPLICATON_DATASTORE: "/data/hpcdata/users/matsco/simple-action-pipeline/example/datastore"
-        - APPLICATION_OUTPUT: "/data/hpcdata/users/matsco/simple-action-pipeline/example/output"
+        - PIPELINE_DIRECTORY: "./"
+        - SCRIPTS_DIRECTORY: "./scripts"
+        - APPLICATON_DATASTORE: "./datastore"
+        - APPLICATION_OUTPUT: "./output"
 
     sequence:
 
