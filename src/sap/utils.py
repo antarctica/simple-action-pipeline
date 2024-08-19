@@ -1,8 +1,8 @@
 import yaml
 import os
 import shutil
-from jugcreate import jugcreate
-from setup_logging import logger
+from sap.jugcreate import jugcreate
+from sap.setup_logging import logger
 
 class configuration:
     '''

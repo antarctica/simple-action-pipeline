@@ -10,7 +10,8 @@ import argparse
 import os
 import glob
 import subprocess
-import utils
+from sap import utils
+from sap.setup_logging import logger
 
 def initial_check(provided_fullpath):
     '''
@@ -103,19 +104,11 @@ def perform(pipeline_directory, action, rebuild):
     logger.info("Pipeline Status: %s", pipeline_type)
     logger.info("Finished")
  
-        
-    #currentwd = os.getcwd()
-    #print(currentwd)
-    #cwlisting = os.listdir(currentwd)
-    #print(cwlisting)
-
-if __name__ == "__main__":
-
+def main():
     """
     pipeline entry point
     this entry point relies on being pointed to a pipeline directory
     """
-    from setup_logging import logger
     
     parser = argparse.ArgumentParser(description='perform action with simple-action-pipeline by supplying a pipeline directory')
     parser.add_argument("action", help="Action for the pipeline to perform. \
@@ -138,3 +131,12 @@ if __name__ == "__main__":
         args.pipeline_directory = args.pipedir
     
     perform(args.pipeline_directory, args.action, args.rebuild)
+
+
+    #currentwd = os.getcwd()
+    #print(currentwd)
+    #cwlisting = os.listdir(currentwd)
+    #print(cwlisting)
+
+if __name__ == "__main__":
+    main()
