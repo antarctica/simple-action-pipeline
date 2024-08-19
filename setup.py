@@ -14,6 +14,8 @@ setuptools.setup(
   package_dir={"": "src"},
   packages=setuptools.find_packages(where='src'),
   install_requires=['jug', 'pytest', 'pyyaml'],
+  entry_points={
+    'console_scripts': ['pipeline=sap.pipeline:main']},
   long_description=get_content("README.md"),
   long_description_content_type="text/markdown",
   url="https://www.github.com/antarctica",
