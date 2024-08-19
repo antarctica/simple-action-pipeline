@@ -1,5 +1,5 @@
 from pathlib import Path
-from setup_logging import logger
+from sap.setup_logging import logger
 
 class jugcreate:
     '''
