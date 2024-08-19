@@ -47,15 +47,17 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
             yaml_pipeline = conf.yaml_ingest(pipeline_fullpath + 'pipeline.yaml')
             yaml_application = conf.yaml_ingest(pipeline_fullpath + 'application.yaml')
             logger.info("Creating .env files")
-            conf.create_envfile(yaml_pipeline)
-            conf.create_envfile(yaml_application)
-            bld_pipeline = utils.build([yaml_pipeline, yaml_application])
+            conf.create_envfile(yaml_pipeline, pipeline_fullpath + 'pipeline.yaml')
+            conf.create_envfile(yaml_application, pipeline_fullpath + 'application.yaml')
+            bld_pipeline = utils.build(pipeline_fullpath, [yaml_pipeline, yaml_application])
+            if bld_pipeline == True:
+                pipeline_type = 'built'
         else:
             logger.info("The pipeline does not appear to be built.")
             logger.info("Please run the pipeline build command. see pipeline --help")
             exit(1)
         
-    if (pipeline_type == 'built'):
+    elif (pipeline_type == 'built'):
         if (action == 'build'):
             if rebuild:
                 logger.info("The pipeline is already built - Forcing rebuild")

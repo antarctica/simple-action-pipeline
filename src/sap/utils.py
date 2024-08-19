@@ -1,6 +1,7 @@
 import yaml
 import os
 import shutil
+from pathlib import Path
 from sap.jugcreate import jugcreate
 from sap.setup_logging import logger
 
@@ -29,12 +30,15 @@ class configuration:
             logger.error("Path %s does not exist.")
         return retval
     
-    def create_envfile(self, yaml_config):
+    def create_envfile(self, yaml_config, yaml_fullpath):
         '''
         Generates env files for a given YAML input config. The env file gets
         deposited in the PIPELINE_DIRECTORY and for this reason the 
         PIPELINE_DIRECTORY must be defined in the 'env' section of the YAML.
         '''
+        # test for current directory in case of relative path.
+        p = Path(yaml_fullpath)
+
         if 'pipeline' in yaml_config and 'env' in yaml_config['pipeline']:
             yaml_subset = yaml_config['pipeline']['env']
         elif 'application' in yaml_config and 'env' in yaml_config['application']:
@@ -45,6 +49,8 @@ class configuration:
                      'variables' in yaml_subset and \
                      yaml_subset['create-env-file'] == True:
                 try:
+                    prev_cwd = Path().resolve()
+                    os.chdir(p.parents[0])
                     for entry in yaml_subset['variables']:
                         if 'PIPELINE_DIRECTORY' in entry:
                             outfilename = entry['PIPELINE_DIRECTORY'] \
@@ -53,7 +59,11 @@ class configuration:
                                 for line in yaml_subset['variables']:
                                     for key, val in line.items():
                                         #print(f'{key}'+'="'+f'{val}'+'"')
-                                        file.write(f'{key}'+'="'+f'{val}'+'"\n')
+                                        if key == 'PIPELINE_DIRECTORY' or key == 'SCRIPTS_DIRECTORY':
+                                            this_p = Path(f'{val}').resolve()
+                                            file.write(f'{key}'+'="'+f'{this_p}'+'"\n')
+                                        else:
+                                            file.write(f'{key}'+'="'+f'{val}'+'"\n')
                                         file.write('export '+f'{key}'+'\n')
                                 
                                 # # activate the python environment at the end of the env file
@@ -63,13 +73,16 @@ class configuration:
                                 #     file.write('source '+f'{python_env_activate}'+'\n')
                 except:
                     logger.error("!! error/undefined PIPELINE_DIRECTORY")
+                finally:
+                    os.chdir(prev_cwd)
 
                 
 class build:
     '''
     Used to build the pipeline from YAML configurations.
     '''
-    def __init__(self, configuration_yamls: list):
+    def __init__(self, directory, configuration_yamls: list):
+        self.root_fullpath = directory
         self.configs = configuration_yamls
         self.pipeline_yaml = None
         self.application_yaml = None
@@ -80,7 +93,7 @@ class build:
         self.build_ready  = False
 
         for a_config in self.configs:
-            self.__check_config(a_config)
+            self.__check_config(a_config, self.root_fullpath)
         if self.__pre_build_check():
             self.build_ready = self.__build_workflow_manager()
 
@@ -129,8 +142,6 @@ class build:
             if self.__directory_exists(self.pip_pipeline + '/' + self.wfman):
                 logger.info("Erasing any previous workflow-manager")
                 shutil.rmtree(self.pip_pipeline + '/' + self.wfman)
-                #command = 'rm -rf ' + self.pip_pipeline + '/' + self.wfman
-                #os.system(command)
             
             os.mkdir(self.pip_pipeline + '/' + self.wfman)
             # Standardise the configuration of JUG.
@@ -177,10 +188,13 @@ class build:
         '''
         return os.path.isfile(file_path)
 
-    def __check_config(self, a_yaml):
+    def __check_config(self, a_yaml, rootdir):
         '''
         Check that all the scripts referenced in the config yaml exist.
         '''
+        this_dir = Path(rootdir)
+        prev_dir = Path().resolve()
+        os.chdir(this_dir)
         this_yaml = a_yaml
         logger.info("Checking %s configuration file.", tuple(this_yaml.keys())[0])
         # First check that the pipeline directories are referenced and exists.
@@ -192,15 +206,15 @@ class build:
                 #print("it's all there", yaml_subset)
                 for a_variable in yaml_subset:
                     if 'PIPELINE_DIRECTORY' in a_variable.keys():
-                        if self.__directory_exists(a_variable['PIPELINE_DIRECTORY']):
+                        if self.__directory_exists(Path(a_variable['PIPELINE_DIRECTORY']).resolve()):
                             if conf_type == 'application':
-                                self.app_pipeline = a_variable['PIPELINE_DIRECTORY']
+                                self.app_pipeline = str(Path(a_variable['PIPELINE_DIRECTORY']).resolve())
                             if conf_type == 'pipeline':
-                                self.pip_pipeline = a_variable['PIPELINE_DIRECTORY']
+                                self.pip_pipeline = str(Path(a_variable['PIPELINE_DIRECTORY']).resolve())
                     # Then check that the scripts directory is references and exists.
                     if 'SCRIPTS_DIRECTORY' in a_variable.keys():
-                        if self.__directory_exists(a_variable['SCRIPTS_DIRECTORY']):
-                            self.app_scripts = a_variable['SCRIPTS_DIRECTORY']
+                        if self.__directory_exists(Path(a_variable['SCRIPTS_DIRECTORY']).resolve()):
+                            self.app_scripts = str(Path(a_variable['SCRIPTS_DIRECTORY']).resolve())
 
         # Have the essential directories been successfully populated?
         if ( self.pip_pipeline == self.app_pipeline ) and \
@@ -226,9 +240,10 @@ class build:
                                     for depend in sub_script['depends']:
                                         if depend not in script_list and depend != '':
                                             script_list.append(depend)
+
                     # Now check existence for each script file
                     all_scripts = [ self.__file_exists(self.app_scripts+'/'+a_file) for a_file in script_list ]
-                    #print(all_scripts)
+
                     if False in all_scripts:
                         self.app_scripts = None
                         logger.error("Unable to validate application configuration file")
@@ -237,4 +252,6 @@ class build:
                     else:
                         # Everything checks out so far so lets build the workflow manager.
                         logger.info("Configuration Checks Complete")
+        # exit without changing path
+        os.chdir(prev_dir)
 
