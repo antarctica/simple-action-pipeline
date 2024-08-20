@@ -261,6 +261,7 @@ def reset_pipeline(jugfilepath):
     try:
         if os.path.isdir(Path.joinpath(directory, name)):
             shutil.rmtree(Path.joinpath(directory, name))
+            os.remove(Path.joinpath(directory, ".workers"))
     except:
         logger.error("Unable to reset pipeline - cannot modify workflow-manager")
 

@@ -96,9 +96,13 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
                 else:
                     logger.info("Executing pipeline "+glob.glob('*.py')[0]+
                                 " ; Workers="+str(maxwork))
+                    worker_procs = [] # store which processes are launched
                     for _ in range(maxwork):
-                        subprocess.call(["jug", "execute", str(glob.glob('*.py')[0])])
+                        p = subprocess.Popen(["jug", "execute", str(glob.glob('*.py')[0])])
+                        worker_procs.append(" "+str(p.pid))
                         time.sleep(0.25)
+                    with open(".workers", "a") as w:
+                        w.writelines(worker_procs)
             os.chdir(current)
         
         elif (action == 'reset'):
