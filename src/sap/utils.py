@@ -255,3 +255,12 @@ class build:
         # exit without changing path
         os.chdir(prev_dir)
 
+def reset_pipeline(jugfilepath):
+    name = Path('recent.'+str(Path(jugfilepath).stem))
+    directory = Path(jugfilepath).parent
+    try:
+        if os.path.isdir(Path.joinpath(directory, name)):
+            shutil.rmtree(Path.joinpath(directory, name))
+    except:
+        logger.error("Unable to reset pipeline - cannot modify workflow-manager")
+
