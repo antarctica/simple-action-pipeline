@@ -9,6 +9,7 @@
 import argparse
 import os
 import glob
+import time
 import subprocess
 from sap import utils
 from sap.setup_logging import logger
@@ -50,7 +51,7 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
             conf.create_envfile(yaml_pipeline, pipeline_fullpath + 'pipeline.yaml')
             conf.create_envfile(yaml_application, pipeline_fullpath + 'application.yaml')
             bld_pipeline = utils.build(pipeline_fullpath, [yaml_pipeline, yaml_application])
-            if bld_pipeline == True:
+            if bld_pipeline.build_ready == True:
                 pipeline_type = 'built'
         else:
             logger.info("The pipeline does not appear to be built.")
@@ -58,6 +59,8 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
             exit(1)
         
     elif (pipeline_type == 'built'):
+        # here I need to use the environment files to set environment
+        # variables if they dont yet exist.
         if (action == 'build'):
             if rebuild:
                 logger.info("The pipeline is already built - Forcing rebuild")
@@ -70,13 +73,31 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
         
         elif (action == 'status'):
             current = os.getcwd()
-            os.system("source %s/pipeline.env" % pipeline_fullpath)
-            os.system("source %s/application.env" % pipeline_fullpath)
             os.chdir(pipeline_fullpath + '/workflow-manager')
             if len(glob.glob('*.py')) == 1:
-                logger.info(str(os.listdir()[0]))
-                subprocess.call(["jug", "status", str(os.listdir()[0])])
+                #logger.info(str(os.listdir()[0]))
+                subprocess.call(["jug", "status", str(glob.glob('*.py')[0])])
             os.chdir(current)
+        
+        elif (action == 'execute'):
+            current = os.getcwd()
+            os.chdir(pipeline_fullpath + '/workflow-manager')
+            maxwork = int(os.environ['PIPELINE_MAXWORKERS'])
+            if len(glob.glob('*.py')) == 1:
+                check = subprocess.call(["jug", "check",
+                                 str(glob.glob('*.py')[0])])
+                if check == 0:  # If all tasks have already completed
+                    logger.info("All Tasks complete, nothing to do")
+                    logger.info("Use the [reset] command before re-executing a completed pipeline")
+                #logger.info(str(os.listdir()[0]))
+                else:
+                    logger.info("Executing pipeline "+glob.glob('*.py')[0]+
+                                " ; Workers="+str(maxwork))
+                    for _ in range(maxwork):
+                        subprocess.call(["jug", "execute", str(glob.glob('*.py')[0])])
+                        time.sleep(0.25)
+            os.chdir(current)
+
 
 def perform(pipeline_directory, action, rebuild):
     if type(pipeline_directory) != type(list):
@@ -102,9 +123,9 @@ def perform(pipeline_directory, action, rebuild):
         exit(1)
 
     pipeline_type = initial_check(pipeline_fullpath)
-    perform_decision(pipeline_type, action, pipeline_fullpath, rebuild)
     logger.info("Pipeline Status: %s", pipeline_type)
-    logger.info("Finished")
+    perform_decision(pipeline_type, action, pipeline_fullpath, rebuild)
+    #logger.info(action+": Finished")
  
 def main():
     """
