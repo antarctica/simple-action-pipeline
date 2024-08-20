@@ -39,16 +39,66 @@ pipeline --help
 ```
 
 #### Running for the first time
-The example pipeline (and any pipeline for that matter) must be build before it can be used.  
+The example pipeline (and any pipeline for that matter) must be built before it can be used.  
 The standard usage for the pipeline command-line tool is:  
 `pipeline` `{OPTIONS}` `[ACTION]` `[TARGET_DIRECTORY]`  
+
+The action `build` will construct the pipeline from the configuration files.
 
 ```
 pipeline build ./example
 ```
 The example pipeline should build without any errors.  
 
-Once built you can check the status of the now built pipeline:
+Once built you can check the status of the, now built, pipeline:
 ```
 pipeline status ./example
 ```
+
+#### Executing the pipeline
+The action `execute` is used to run the pipeline from start to finish. The pipeline will spawn a maximum number of 'workers' as defined in **pipeline.yaml**. The maximum number of workers should be set to how many scripts will run in parallel within the pipeline. For the example pipeline this is 2 workers.  
+
+```
+pipeline execute ./example
+ - or -
+pipeline execute ./example > ./example/log.txt
+```
+As shown above, you can re-direct the output of the pipeline to a log file.
+
+#### Checking the pipeline status
+The action `status` is used to check the current state of the pipeline.
+
+```
+pipeline status ./example
+ - or -
+pipeline status ./example --short
+```
+The action `status` can also present the current state of the pipeline in short form by using the '--short' flag.  
+The status of the pipeline persists even once the pipeline is complete, which allows checking the pipeline hours, or even days after completion.  
+
+#### Resetting the pipeline
+Because the pipeline state persists after completion (or failure) it must be `reset` before it can be executed again. Trying to execute a completed pipeline will result in no execution as all the work has already been done.  
+
+```
+pipeline execute ./example
+
+> INFO:pipeline:All Tasks complete, nothing to do
+> INFO:pipeline:Use the [reset] command before re-executing a completed pipeline
+```
+The action `reset` resets the pipeline back to it's un-executed state.  
+
+```
+pipeline reset ./example
+```
+
+#### Halting a running pipeline
+The action `halt` stops and destroys all of the workers on a pipeline.
+
+```
+pipeline halt ./example
+```
+The status of the pipeline will remain static beyond this point and show only scripts/task which successfully completed in full.  
+
+The pipeline will allow re-execution from this point by issuing the `execute` action. The pipeline will commence from it's last successfully completed task(s).  
+
+The pipeline can also be `reset` to start it from the beginning again.  
