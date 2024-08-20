@@ -9,6 +9,7 @@
 import argparse
 import os
 import glob
+import time
 import subprocess
 from sap import utils
 from sap.setup_logging import logger
@@ -38,7 +39,7 @@ def initial_check(provided_fullpath):
         exit(1)
     return retval
 
-def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
+def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
     if (pipeline_type == 'unbuilt'):
         if (action == 'build'):
             logger.info("Build process started")
@@ -50,7 +51,7 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
             conf.create_envfile(yaml_pipeline, pipeline_fullpath + 'pipeline.yaml')
             conf.create_envfile(yaml_application, pipeline_fullpath + 'application.yaml')
             bld_pipeline = utils.build(pipeline_fullpath, [yaml_pipeline, yaml_application])
-            if bld_pipeline == True:
+            if bld_pipeline.build_ready == True:
                 pipeline_type = 'built'
         else:
             logger.info("The pipeline does not appear to be built.")
@@ -58,6 +59,8 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
             exit(1)
         
     elif (pipeline_type == 'built'):
+        # here I need to use the environment files to set environment
+        # variables if they dont yet exist.
         if (action == 'build'):
             if rebuild:
                 logger.info("The pipeline is already built - Forcing rebuild")
@@ -69,16 +72,49 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild):
                 perform_decision('unbuilt', 'build', pipeline_fullpath, True)
         
         elif (action == 'status'):
+            extra_arg = ''
+            if short:
+                extra_arg = '--short'
             current = os.getcwd()
-            os.system("source %s/pipeline.env" % pipeline_fullpath)
-            os.system("source %s/application.env" % pipeline_fullpath)
-            os.chdir(pipeline_fullpath + '/workflow-manager')
+            os.chdir(pipeline_fullpath + 'workflow-manager')
             if len(glob.glob('*.py')) == 1:
-                logger.info(str(os.listdir()[0]))
-                subprocess.call(["jug", "status", str(os.listdir()[0])])
+                subprocess.call(["jug", "status",
+                                 str(glob.glob('*.py')[0]), extra_arg])
+            os.chdir(current)
+        
+        elif (action == 'execute'):
+            current = os.getcwd()
+            os.chdir(pipeline_fullpath + 'workflow-manager')
+            maxwork = int(os.environ['PIPELINE_MAXWORKERS'])
+            if len(glob.glob('*.py')) == 1:
+                check = subprocess.call(["jug", "check",
+                                 str(glob.glob('*.py')[0])])
+                if check == 0:  # If all tasks have already completed
+                    logger.info("All Tasks complete, nothing to do")
+                    logger.info("Use the [reset] command before re-executing a completed pipeline")
+                #logger.info(str(os.listdir()[0]))
+                else:
+                    logger.info("Executing pipeline "+glob.glob('*.py')[0]+
+                                " ; Workers="+str(maxwork))
+                    for _ in range(maxwork):
+                        subprocess.call(["jug", "execute", str(glob.glob('*.py')[0])])
+                        time.sleep(0.25)
+            os.chdir(current)
+        
+        elif (action == 'reset'):
+            current = os.getcwd()
+            os.chdir(pipeline_fullpath + 'workflow-manager')
+            logger.info("Resetting pipeline state")
+            if len(glob.glob('*.py')) == 1:
+                utils.reset_pipeline(pipeline_fullpath +
+                            'workflow-manager/'+str(glob.glob('*.py')[0]))
+                subprocess.call(["jug", "status", str(glob.glob('*.py')[0])])
+                logger.info("Reset complete")
+                logger.info("Ready to execute")
             os.chdir(current)
 
-def perform(pipeline_directory, action, rebuild):
+
+def perform(pipeline_directory, action, rebuild, short):
     if type(pipeline_directory) != type(list):
         pipeline_directory = [pipeline_directory]
     # The first element of pipeline_directory should always be the
@@ -102,9 +138,9 @@ def perform(pipeline_directory, action, rebuild):
         exit(1)
 
     pipeline_type = initial_check(pipeline_fullpath)
-    perform_decision(pipeline_type, action, pipeline_fullpath, rebuild)
     logger.info("Pipeline Status: %s", pipeline_type)
-    logger.info("Finished")
+    perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short)
+    #logger.info(action+": Finished")
  
 def main():
     """
@@ -119,6 +155,7 @@ def main():
     parser.add_argument("pipeline_directory", help="Pipeline directory to use", nargs="*", default="./")
     parser.add_argument("-d", "--directory", help="Pipeline directory", action="store", dest='pipedir')
     parser.add_argument("-f", "--force-rebuild", help="Force building the pipeline that is already built.", action="store_true", dest='rebuild', default=False)
+    parser.add_argument("-s", "--short", help="Output shortened information where supported", action="store_true", dest='short', default=False)
     args = parser.parse_args()
 
 
@@ -132,13 +169,8 @@ def main():
     if (args.pipedir):
         args.pipeline_directory = args.pipedir
     
-    perform(args.pipeline_directory, args.action, args.rebuild)
+    perform(args.pipeline_directory, args.action, args.rebuild, args.short)
 
-
-    #currentwd = os.getcwd()
-    #print(currentwd)
-    #cwlisting = os.listdir(currentwd)
-    #print(cwlisting)
 
 if __name__ == "__main__":
     main()
