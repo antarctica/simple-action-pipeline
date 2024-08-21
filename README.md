@@ -27,6 +27,13 @@ git clone https://github.com/antarctica/simple-action-pipeline ./simple-action-p
 cd ./simple-action-pipeline
 pip install -e .
 ```  
+
+You may wish to create a symbolic link to the virtual python environment for your pipeline:  
+```
+ls -s <path-to-python-venv>/activate <pipeline-directory>/activate
+```
+This way you can easily locate and activate the virtual environment for specific pipelines.
+
 ### Usage
 A simplified implementation of a simple-action-pipeline is given in the `example` folder. Two yaml files in the `example` folder are used to configure the pipeline and the 'application specific' scripts are in the `example/scripts` folder.
 ```
