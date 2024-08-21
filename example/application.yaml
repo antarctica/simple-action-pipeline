@@ -13,7 +13,7 @@ application:
         variables:
         - PIPELINE_DIRECTORY: "./"
         - SCRIPTS_DIRECTORY: "./scripts"
-        - APPLICATON_DATASTORE: "./datastore"
+        - APPLICATION_DATASTORE: "./datastore"
         - APPLICATION_OUTPUT: "./output"
 
     sequence:
