@@ -116,6 +116,17 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
                 logger.info("Reset complete")
                 logger.info("Ready to execute")
             os.chdir(current)
+        
+        elif (action == 'halt'):
+            current = os.getcwd()
+            os.chdir(pipeline_fullpath + 'workflow-manager')
+            logger.info("Halting the pipeline")
+            if len(glob.glob('*.py')) == 1:
+                utils.halt_pipeline(pipeline_fullpath +
+                            'workflow-manager/'+str(glob.glob('*.py')[0]))
+                subprocess.call(["jug", "status", str(glob.glob('*.py')[0])])
+                logger.info("Halt complete")
+            os.chdir(current)
 
 
 def perform(pipeline_directory, action, rebuild, short):

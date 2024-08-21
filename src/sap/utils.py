@@ -1,7 +1,9 @@
 import yaml
 import os
 import shutil
+import subprocess
 from pathlib import Path
+from signal import SIGKILL
 from sap.jugcreate import jugcreate
 from sap.setup_logging import logger
 
@@ -265,3 +267,22 @@ def reset_pipeline(jugfilepath):
     except:
         logger.error("Unable to reset pipeline - cannot modify workflow-manager")
 
+def halt_pipeline(jugfilepath):
+    directory = Path(jugfilepath).parent
+    try:
+        if os.path.isfile(Path.joinpath(directory, ".workers")):
+            with open(Path.joinpath(directory, ".workers")) as w:
+                workers = w.readlines()
+            workers = ''.join([pid for line in workers for pid in line])
+            workers = workers.split(" ")
+            print(workers)
+            for pid in workers:
+                if pid != '':
+                    try:
+                        subprocess.call(["kill", pid])
+                    except Exception as e:
+                        logger.error(e)
+                        logger.warning("Worker %s no longer running", pid)
+            os.remove(Path.joinpath(directory, ".workers"))
+    except:
+        logger.error("Unable to halt pipeline - cannot release workers")
