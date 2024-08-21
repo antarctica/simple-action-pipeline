@@ -1,8 +1,10 @@
 import yaml
 import os
+import glob
 import shutil
 import subprocess
 from pathlib import Path
+from time import sleep
 from signal import SIGKILL
 from sap.jugcreate import jugcreate
 from sap.setup_logging import logger
@@ -98,6 +100,18 @@ class build:
             self.__check_config(a_config, self.root_fullpath)
         if self.__pre_build_check():
             self.build_ready = self.__build_workflow_manager()
+        if self.build_ready:
+            self.__create_graph()
+
+    def __create_graph(self):
+        current = os.getcwd()
+        os.chdir(self.pip_pipeline + "/" + self.wfman)
+        if len(glob.glob('*.py')) == 1:
+            subprocess.call(["jug", "graph",
+                            str(glob.glob('*.py')[0])])
+            sleep(0.5)
+        os.remove(str(glob.glob('*.dot')[0]))
+        os.chdir(current)
 
     def __configure_jug(self):
         '''
