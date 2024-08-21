@@ -300,3 +300,22 @@ def halt_pipeline(jugfilepath):
             os.remove(Path.joinpath(directory, ".workers"))
     except:
         logger.error("Unable to halt pipeline - cannot release workers")
+
+def populate_env_variables(environment_file):
+    '''
+    If any environment variables in the environment file do not
+    already exist in the environment, then populate them from the
+    file into the environment.
+    '''
+    try:
+        with open(environment_file) as envfile:
+            filelines = envfile.readlines()
+        filelines = [variable.strip('\n') for variable in filelines if 'export' not in variable]
+        for envvar in filelines:
+            (name, value) = envvar.split('=')
+            try:
+                _ = os.environ[str(name)]
+            except KeyError:
+                os.environ[str(name)] = str(value).strip('"')
+    except Exception as e:
+        logger.error(e)

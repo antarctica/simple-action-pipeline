@@ -84,6 +84,12 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
         
         elif (action == 'execute'):
             current = os.getcwd()
+
+            # auto populate any missing environment variables
+            os.chdir(pipeline_fullpath)
+            for envfile in glob.glob('*.env'):
+                utils.populate_env_variables(envfile)
+
             os.chdir(pipeline_fullpath + 'workflow-manager')
             maxwork = int(os.environ['PIPELINE_MAXWORKERS'])
             if len(glob.glob('*.py')) == 1:
