@@ -37,11 +37,11 @@ Check the help of the `pipeline` command-line tool:
 ```
 pipeline --help
 ```
+The standard usage for the pipeline command-line tool is:  
+`pipeline` `{OPTIONS}` `[ACTION]` `[TARGET_DIRECTORY]`  
 
 #### Running for the first time
 The example pipeline (and any pipeline for that matter) must be built before it can be used.  
-The standard usage for the pipeline command-line tool is:  
-`pipeline` `{OPTIONS}` `[ACTION]` `[TARGET_DIRECTORY]`  
 
 The action `build` will construct the pipeline from the configuration files.
 
