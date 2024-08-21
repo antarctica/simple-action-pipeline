@@ -2,4 +2,10 @@
 
 set -e
 
-echo "read read read read read"
+pipeline_directory = ${PIPELINE_DIRECTORY}
+
+echo "Reading Cat SleepyTime Duration data"
+
+
+
+

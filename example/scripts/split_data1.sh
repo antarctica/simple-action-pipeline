@@ -3,3 +3,4 @@
 set -e
 
 echo "splitting 1 1 1 1 1 1 1 1 1 1"
+sleep 100
