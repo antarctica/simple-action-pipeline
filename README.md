@@ -30,7 +30,7 @@ pip install -e .
 
 You may wish to create a symbolic link to the virtual python environment for your pipeline:  
 ```
-ls -s <path-to-python-venv>/activate <pipeline-directory>/activate
+ln -s <path-to-python-venv>/activate <pipeline-directory>/activate
 ```
 This way you can easily locate and activate the virtual environment for specific pipelines.
 
