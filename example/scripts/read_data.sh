@@ -10,7 +10,7 @@ cp ${pipeline_directory}/${data_source} ${pipeline_directory}/data_file.csv
 
 echo "Extracting columns"
 # extract column numbers for 'gender' and 'sleep_duration_minutes'
-IFS=',' read -r -a array <<< "$(head -n 1 data_file.csv)"
+IFS=',' read -r -a array <<< "$(head -n 1 ${pipeline_directory}/data_file.csv)"
 for index in "${!array[@]}"
 do
     if   [ ${array[index]} = 'gender' ]; then
@@ -24,7 +24,7 @@ done
 
 echo "Writing extracted columns to columns.csv"
 # write the columns we want to file
-cat data_file.csv | cut -d',' -f$gender,$duration >> ${pipeline_directory}/columns.csv
+cat ${pipeline_directory}/data_file.csv | cut -d',' -f$gender,$duration >> ${pipeline_directory}/columns.csv
 
 echo "Removing original file"
 rm ${pipeline_directory}/data_file.csv

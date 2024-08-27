@@ -24,12 +24,12 @@ echo '' >> ${pipeline_directory}/seconds.csv
 
 echo "Writing converted columns to seconds.csv"
 # write the columns we want to file
-cat columns.csv | tail -n +2 | while read line 
+cat ${pipeline_directory}/columns.csv | tail -n +2 | while read line 
 do
     value_gender=$(echo $line | cut -d',' -f$gender)
     value_duration=$(echo $line | cut -d',' -f$duration)
     value_duration=$(echo $value_duration " * 60" | bc )
-    echo $value_gender,$value_duration >> seconds.csv
+    echo $value_gender,$value_duration >> ${pipeline_directory}/seconds.csv
 done
 
 echo "Removing columns file"
