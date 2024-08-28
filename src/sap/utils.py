@@ -100,8 +100,8 @@ class build:
             self.__check_config(a_config, self.root_fullpath)
         if self.__pre_build_check():
             self.build_ready = self.__build_workflow_manager()
-        if self.build_ready:
-            self.__create_graph()
+        # if self.build_ready:
+        #     self.__create_graph()
 
     def __create_graph(self):
         current = os.getcwd()
