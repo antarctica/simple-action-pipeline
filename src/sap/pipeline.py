@@ -61,6 +61,11 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
     elif (pipeline_type == 'built'):
         # here I need to use the environment files to set environment
         # variables if they dont yet exist.
+        #  -- auto populate any missing environment variables --
+            os.chdir(pipeline_fullpath)
+            for envfile in glob.glob('*.env'):
+                utils.populate_env_variables(envfile)
+
         if (action == 'build'):
             if rebuild:
                 logger.info("The pipeline is already built - Forcing rebuild")
@@ -75,6 +80,7 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
             extra_arg = ''
             if short:
                 extra_arg = '--short'
+
             current = os.getcwd()
             os.chdir(pipeline_fullpath + 'workflow-manager')
             if len(glob.glob('*.py')) == 1:
@@ -84,11 +90,6 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
         
         elif (action == 'execute'):
             current = os.getcwd()
-
-            # auto populate any missing environment variables
-            os.chdir(pipeline_fullpath)
-            for envfile in glob.glob('*.env'):
-                utils.populate_env_variables(envfile)
 
             os.chdir(pipeline_fullpath + 'workflow-manager')
             maxwork = int(os.environ['PIPELINE_MAXWORKERS'])
