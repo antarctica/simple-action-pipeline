@@ -62,9 +62,9 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
         # here I need to use the environment files to set environment
         # variables if they dont yet exist.
         #  -- auto populate any missing environment variables --
-            os.chdir(pipeline_fullpath)
-            for envfile in glob.glob('*.env'):
-                utils.populate_env_variables(envfile)
+        os.chdir(pipeline_fullpath)
+        for envfile in glob.glob('*.env'):
+            utils.populate_env_variables(envfile)
 
         if (action == 'build'):
             if rebuild:
