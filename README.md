@@ -122,13 +122,11 @@ The status of the pipeline will remain static beyond this point and show only sc
 
 The pipeline will allow re-execution from this point by issuing the `execute` action. The pipeline will commence from it's last successfully completed task(s).  
 
-<<<<<<< HEAD
-The pipeline can also be `reset` follwing a `halt` action to start it from the beginning again.  
+The pipeline can also be `reset` following a `halt` action to start it from the beginning again.  
 
 ##  
 
-## Contributing
+## Contributing  
+
 If you find a bug, or would like to contribute please raise an issue in the first instance.
-=======
-The pipeline can also be `reset` following a `halt` action to start it from the beginning again.  
->>>>>>> 44eae222d70a34ebc48e0655bbd1b419d31a7a74
+
