@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#Script to take the results from the example and print them
+#to std output and a log file.
+
 set -e
 
 pipeline_directory=$PIPELINE_DIRECTORY
