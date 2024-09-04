@@ -2,5 +2,6 @@
 Think of this directory `example` as containing the entire workflow of a pipeline. All the configuration/code/structure is inside this directory and pretty much self contained.  
 
 The **simple-action-pipeline** builds the pipeline from the *YAML* config files and code within this directory.  
-The **simple-action-pipeline** also executes the pipeline from this directory and creates it's own `workflow-manager` sub-directory, which it uses to monitor the state of the pipeline.  
+The **simple-action-pipeline** also executes the pipeline from this directory and creates it's own `workflow-manager` sub-directory, which it uses to monitor the state of the pipeline. 
 
+Follow the readme on the main repository page which will guide you through the principles and operation of the pipeline and this example.
