@@ -1,3 +1,7 @@
+# Creates a new jugfile from the provided pipeline and application YAML
+# files. This will overwrite any pre-existing  jugfile in the
+# ./workflow_manager/ directory of the same name.
+
 from pathlib import Path
 from sap.setup_logging import logger
 
