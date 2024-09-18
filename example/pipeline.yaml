@@ -13,6 +13,5 @@ pipeline:
         variables:
         - PIPELINE_DIRECTORY: "./"
         - PIPELINE_MAXWORKERS: 2
-        - PIPELINE_ACTIVEHOURS: 9 10 11 12 13 14 15
     
     python-env: "./activate"
