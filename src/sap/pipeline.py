@@ -105,7 +105,7 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
                                 " ; Workers="+str(maxwork))
                     worker_procs = [] # store which processes are launched
                     for _ in range(maxwork):
-                        p = subprocess.Popen(["jug", "execute", str(glob.glob('*.py')[0])])
+                        p = subprocess.Popen(["jug", "execute", "--keep-failed", str(glob.glob('*.py')[0])])
                         worker_procs.append(" "+str(p.pid))
                         time.sleep(0.25)
                     with open(".workers", "a") as w:
