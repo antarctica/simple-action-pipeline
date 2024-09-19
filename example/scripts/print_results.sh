@@ -96,6 +96,8 @@ do
 
 done
 
+echo "Removing source seconds.csv"
+rm ${pipeline_directory}/seconds.csv
 echo "Removing female and male csv files"
 rm ${pipeline_directory}/${data_source1} ${pipeline_directory}/${data_source2}
 
