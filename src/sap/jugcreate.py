@@ -175,14 +175,14 @@ def _00_finish_pipeline(finish_times: list):
                 self.__add_to_jugfile(filepath, 
                   '\n@TaskGenerator\ndef '+a_task[1]+'(finish_times: list):\n')
                 self.__add_to_jugfile(filepath,
-                  '    print(datetime.now(), "| started '+a_task[1]+'")\n')
+                  '    print("INFO:"+str(datetime.now())+":pipeline:Task: '+a_task[1]+' started.")')
                 self.__add_to_jugfile(filepath,
                   "    returncode = subprocess.call('bash ' + scripts_directory + " +
                   "'/"+a_task[0]+"', shell=True)\n")
                 self.__add_to_jugfile(filepath,
-                  '    if returncode != 0: raise RuntimeError("'+a_task[1]+' failed")\n')
+                  '    if returncode != 0: raise RuntimeError("Task: '+a_task[1]+' failed")\n')
                 self.__add_to_jugfile(filepath,
-                  '    print(datetime.now(), "| finished '+a_task[1]+'")\n')
+                  '    print("INFO:"+str(datetime.now())+":pipeline:Task: '+a_task[1]+' finished.")')
                 self.__add_to_jugfile(filepath, 
                   '    return datetime.now()\n')
 
