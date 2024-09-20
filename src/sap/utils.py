@@ -303,9 +303,8 @@ def halt_pipeline(jugfilepath):
 
 def populate_env_variables(environment_file):
     '''
-    If any environment variables in the environment file do not
-    already exist in the environment, then populate them from the
-    file into the environment.
+    Clears any pre-existing environment variables of the same
+    name, then populates them from the env file into the environment.
     '''
     try:
         with open(environment_file) as envfile:
@@ -315,6 +314,8 @@ def populate_env_variables(environment_file):
             (name, value) = envvar.split('=')
             try:
                 _ = os.environ[str(name)]
+                os.environ.pop(name)
+                os.environ[str(name)] = str(value).strip('"')
             except KeyError:
                 os.environ[str(name)] = str(value).strip('"')
     except Exception as e:
