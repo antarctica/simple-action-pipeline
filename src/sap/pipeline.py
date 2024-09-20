@@ -83,9 +83,18 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
 
             current = os.getcwd()
             os.chdir(pipeline_fullpath + 'workflow-manager')
+            # Check the modified time of the workflow-manager
             if len(glob.glob('*.py')) == 1:
-                subprocess.call(["jug", "status",
-                                 str(glob.glob('*.py')[0]), extra_arg])
+                script = str(glob.glob('*.py')[0])
+                sub_script = script.split('.py')[0]
+                if len(glob.glob('recent.*')) == 1:
+                    dir = str(glob.glob('recent.*')[0])
+                    sub_dir = dir.split('recent.')[-1]
+                    if sub_script == sub_dir:
+                        logger.info("Pipeline Modified Time: %s", time.ctime(os.path.getmtime(dir)))
+                else:
+                    logger.info("Pipeline Modified Time: Pipeline has been reset")
+                subprocess.call(["jug", "status", script, extra_arg])
             os.chdir(current)
         
         elif (action == 'execute'):
