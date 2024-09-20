@@ -172,12 +172,18 @@ def _00_finish_pipeline(finish_times: list):
     def __task_write(self, filepath, tasklist):
         try:
             for a_task in tasklist:
+                if a_task[0].endswith('.sh'):
+                    exe_type = 'bash'
+                elif a_task[0].endswith('.py'):
+                    exe_type = 'python'
+                else:
+                    exe_type = 'bash'
                 self.__add_to_jugfile(filepath, 
                   '\n@TaskGenerator\ndef '+a_task[1]+'(finish_times: list):\n')
                 self.__add_to_jugfile(filepath,
                   '    print("INFO:"+str(datetime.now())+":pipeline:Task: '+a_task[1]+' started.")')
                 self.__add_to_jugfile(filepath,
-                  "    returncode = subprocess.call('bash ' + scripts_directory + " +
+                  "    returncode = subprocess.call('"+exe_type+" ' + scripts_directory + " +
                   "'/"+a_task[0]+"', shell=True)\n")
                 self.__add_to_jugfile(filepath,
                   '    if returncode != 0: raise RuntimeError("Task: '+a_task[1]+' failed")\n')
