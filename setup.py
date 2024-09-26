@@ -7,7 +7,7 @@ def get_content(filename):
 setuptools.setup(
   include_package_data=True,
   name='sap',
-  version='0.0.1',
+  version='1.0.0',
   description='simple action pipeline python package',
   author='matscorse',
   author_email='matsco@bas.ac.uk',
@@ -19,7 +19,7 @@ setuptools.setup(
   long_description=get_content("README.md"),
   long_description_content_type="text/markdown",
   url="https://www.github.com/antarctica",
-  classifiers=[el.lstrip() for el in """Development Status :: 0 - Alpha
+  classifiers=[el.lstrip() for el in """Development Status :: Production
     Intended Audience :: Science/Research
     Intended Audience :: System Administrators
     License :: OSI Approved :: MIT License
