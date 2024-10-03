@@ -290,19 +290,20 @@ def check_max_workers(max_workers, jugfilepath):
     '''
     # Load the workers file
     directory = Path(jugfilepath).parent
-    with open(Path.joinpath(directory, ".workers")) as w:
-        workers = w.readlines()
-    workers = ''.join([pid for line in workers for pid in line])
-    workers = workers.split(" ")
-    print(workers)
-    running_workers = []
-    # Count how many workers are still working
-    for worker in workers:
-        if psutil.exists(worker):
-            running_workers.append(worker)
-    print(len(running_workers))
-    # Subtract any running workers from the maximum allowed
-    workers_to_create = max_workers - len(running_workers)
+    if os.path.isfile(Path.joinpath(directory, ".workers")):
+        with open(Path.joinpath(directory, ".workers")) as w:
+            workers = w.readlines()
+        workers = ''.join([pid for line in workers for pid in line])
+        workers = workers.split(" ")
+        running_workers = []
+        # Count how many workers are still working
+        for worker in workers:
+            if worker != '' and psutil.pid_exists(int(worker)):
+                running_workers.append(worker)
+        # Subtract any running workers from the maximum allowed
+        workers_to_create = max_workers - len(running_workers)
+    else:
+        workers_to_create = max_workers
     return workers_to_create
 
 def halt_pipeline(jugfilepath):
