@@ -15,10 +15,12 @@ from jug import TaskGenerator
 from datetime import datetime
 from os import environ
 import subprocess
+import time
 """
     STANDARD_PSTART = """
 @TaskGenerator
 def _00_start_pipeline():
+    time.sleep(0.5)
     print(datetime.now(), "| started pipeline")
     subprocess.call('jug status ' + '/workflow-manager/', shell=True) 
     return datetime.now()
@@ -27,6 +29,7 @@ def _00_start_pipeline():
     STANDARD_PFINISH = """
 @TaskGenerator
 def _00_finish_pipeline(finish_times: list):
+    time.sleep(0.5)
     print(datetime.now(), "| finished pipeline")
     subprocess.call('jug status ' + '/workflow-manager/', shell=True)  
     return datetime.now()
