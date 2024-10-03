@@ -13,7 +13,7 @@ setuptools.setup(
   author_email='matsco@bas.ac.uk',
   package_dir={"": "src"},
   packages=setuptools.find_packages(where='src'),
-  install_requires=['jug', 'pytest', 'pyyaml'],
+  install_requires=['jug', 'pytest', 'pyyaml', 'psutil'],
   entry_points={
     'console_scripts': ['pipeline=sap.pipeline:main']},
   long_description=get_content("README.md"),
