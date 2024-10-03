@@ -111,8 +111,10 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
                 #logger.info(str(os.listdir()[0]))
                 else:
                     logger.info("Executing pipeline "+glob.glob('*.py')[0]+
-                                " ; Workers="+str(maxwork))
+                                " ; MaxWorkers="+str(maxwork))
                     worker_procs = [] # store which processes are launched
+                    maxwork = utils.check_max_workers(maxwork, pipeline_fullpath +
+                            'workflow-manager/'+str(glob.glob('*.py')[0]))
                     for _ in range(maxwork):
                         p = subprocess.Popen(["jug", "execute", "--keep-failed", str(glob.glob('*.py')[0])])
                         worker_procs.append(" "+str(p.pid))

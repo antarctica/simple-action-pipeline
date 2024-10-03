@@ -2,6 +2,7 @@ import yaml
 import os
 import glob
 import shutil
+import psutil
 import subprocess
 from pathlib import Path
 from time import sleep
@@ -280,6 +281,29 @@ def reset_pipeline(jugfilepath):
             os.remove(Path.joinpath(directory, ".workers"))
     except:
         logger.error("Unable to reset pipeline - cannot modify workflow-manager")
+
+def check_max_workers(max_workers, jugfilepath):
+    '''
+    With the max_workers provided, deduce how many workers are currently working
+    on the pipeline and thus how many more workers to create to stay below the
+    max_workers limit.
+    '''
+    # Load the workers file
+    directory = Path(jugfilepath).parent
+    with open(Path.joinpath(directory, ".workers")) as w:
+        workers = w.readlines()
+    workers = ''.join([pid for line in workers for pid in line])
+    workers = workers.split(" ")
+    print(workers)
+    running_workers = []
+    # Count how many workers are still working
+    for worker in workers:
+        if psutil.exists(worker):
+            running_workers.append(worker)
+    print(len(running_workers))
+    # Subtract any running workers from the maximum allowed
+    workers_to_create = max_workers - len(running_workers)
+    return workers_to_create
 
 def halt_pipeline(jugfilepath):
     directory = Path(jugfilepath).parent
