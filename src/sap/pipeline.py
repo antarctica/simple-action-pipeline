@@ -124,25 +124,33 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
             os.chdir(current)
         
         elif (action == 'reset'):
+            extra_arg = ''
+            if short:
+                extra_arg = '--short'
+            
             current = os.getcwd()
             os.chdir(pipeline_fullpath + 'workflow-manager')
             logger.info("Resetting pipeline state")
             if len(glob.glob('*.py')) == 1:
                 utils.reset_pipeline(pipeline_fullpath +
                             'workflow-manager/'+str(glob.glob('*.py')[0]))
-                subprocess.call(["jug", "status", str(glob.glob('*.py')[0])])
+                subprocess.call(["jug", "status", extra_arg, str(glob.glob('*.py')[0])])
                 logger.info("Reset complete")
                 logger.info("Ready to execute")
             os.chdir(current)
         
         elif (action == 'halt'):
+            extra_arg = ''
+            if short:
+                extra_arg = '--short'
+            
             current = os.getcwd()
             os.chdir(pipeline_fullpath + 'workflow-manager')
             logger.info("Halting the pipeline")
             if len(glob.glob('*.py')) == 1:
                 utils.halt_pipeline(pipeline_fullpath +
                             'workflow-manager/'+str(glob.glob('*.py')[0]))
-                subprocess.call(["jug", "status", str(glob.glob('*.py')[0])])
+                subprocess.call(["jug", "status", extra_arg, str(glob.glob('*.py')[0])])
                 logger.info("Halt complete")
             os.chdir(current)
 
