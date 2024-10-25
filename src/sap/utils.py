@@ -273,6 +273,7 @@ class build:
         os.chdir(prev_dir)
 
 def reset_pipeline(jugfilepath):
+    halt_pipeline(jugfilepath)
     name = Path('recent.'+str(Path(jugfilepath).stem))
     directory = Path(jugfilepath).parent
     try:
@@ -314,7 +315,7 @@ def halt_pipeline(jugfilepath):
                 workers = w.readlines()
             workers = ''.join([pid for line in workers for pid in line])
             workers = workers.split(" ")
-            print(workers)
+            ##print(workers)
             for pid in workers:
                 if pid != '':
                     try:
