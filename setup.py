@@ -7,7 +7,7 @@ def get_content(filename):
 setuptools.setup(
   include_package_data=True,
   name='sap',
-  version='1.0.3',
+  version='1.0.4',
   description='simple action pipeline python package',
   author='matscorse',
   author_email='matsco@bas.ac.uk',
