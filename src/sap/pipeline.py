@@ -8,6 +8,7 @@
 
 import argparse
 import os
+import re
 import glob
 import time
 import subprocess
@@ -39,7 +40,7 @@ def initial_check(provided_fullpath):
         exit(1)
     return retval
 
-def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
+def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, reset, short):
     if (pipeline_type == 'unbuilt'):
         if (action == 'build'):
             logger.info("Build process started")
@@ -130,13 +131,32 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
             
             current = os.getcwd()
             os.chdir(pipeline_fullpath + 'workflow-manager')
-            logger.info("Resetting pipeline state")
-            if len(glob.glob('*.py')) == 1:
-                utils.reset_pipeline(pipeline_fullpath +
-                            'workflow-manager/'+str(glob.glob('*.py')[0]))
-                subprocess.call(["jug", "status", str(glob.glob('*.py')[0]), extra_arg])
-                logger.info("Reset complete")
-                logger.info("Ready to execute")
+
+            try:
+                check = subprocess.check_output("echo $(jug status "+str(glob.glob('*.py')[0])+" --short)", shell=True)
+                between_brackets = re.search("\\((.+?)\\)", check.decode('utf-8'))
+
+                #if the phrase 'none active' or 'tasks' found between the brackets
+                #then it is okay to reset the pipeline without being forced
+                if between_brackets:
+                    found = str(between_brackets.group(1))
+                    if reset or str(found) == 'none active' or 'tasks' in str(found):
+                        logger.info("Resetting pipeline state")
+                        if len(glob.glob('*.py')) == 1:
+                            utils.reset_pipeline(pipeline_fullpath +
+                                    'workflow-manager/'+str(glob.glob('*.py')[0]))
+                            subprocess.call(["jug", "status", str(glob.glob('*.py')[0]), extra_arg])
+                            logger.info("Reset complete")
+                            logger.info("Ready to execute")
+                    #if anything else is between the brackets then forced must be
+                    #specified to reset the pipeline.
+                    else:
+                        logger.warning("Pipeline NOT reset as it is currently active")
+                        logger.info("Refer to --help to see how to force a pipeline reset")
+            except:
+                logger.warning("Unable to check the state of the pipeline")
+                logger.info("Pipeline will NOT be reset")
+
             os.chdir(current)
         
         elif (action == 'halt'):
@@ -155,7 +175,7 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short):
             os.chdir(current)
 
 
-def perform(pipeline_directory, action, rebuild, short):
+def perform(pipeline_directory, action, rebuild, reset, short):
     if type(pipeline_directory) != type(list):
         pipeline_directory = [pipeline_directory]
     # The first element of pipeline_directory should always be the
@@ -180,7 +200,7 @@ def perform(pipeline_directory, action, rebuild, short):
 
     pipeline_type = initial_check(pipeline_fullpath)
     logger.info("Pipeline Status: %s", pipeline_type)
-    perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, short)
+    perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, reset, short)
     #logger.info(action+": Finished")
  
 def main():
@@ -195,7 +215,8 @@ def main():
                             type=str, choices=['build', 'status', 'execute', 'reset', 'halt'])
     parser.add_argument("pipeline_directory", help="Pipeline directory to use", nargs="*", default="./")
     parser.add_argument("-d", "--directory", help="Pipeline directory", action="store", dest='pipedir')
-    parser.add_argument("-f", "--force-rebuild", help="Force building the pipeline that is already built.", action="store_true", dest='rebuild', default=False)
+    parser.add_argument("-b", "--force-build", help="Force building the pipeline that is already built.", action="store_true", dest='rebuild', default=False)
+    parser.add_argument("-r", "--force-reset", help="Force reset if the pipeline is still active", action="store_true", dest='reset', default=False)
     parser.add_argument("-s", "--short", help="Output shortened information where supported", action="store_true", dest='short', default=False)
     args = parser.parse_args()
 
@@ -210,7 +231,7 @@ def main():
     if (args.pipedir):
         args.pipeline_directory = args.pipedir
     
-    perform(args.pipeline_directory, args.action, args.rebuild, args.short)
+    perform(args.pipeline_directory, args.action, args.rebuild, args.reset, args.short)
 
 
 if __name__ == "__main__":
