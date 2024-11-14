@@ -121,8 +121,10 @@ class build:
         '''
         try:
             #re-write the user's jugrc config file
-            os.system("mkdir -p $HOME/.config")
-            os.system("echo $'[main]\njugdir=recent.%(jugfile)s\nwill_cite=True\n' > $HOME/.config/jugrc")
+            jug_config_dir = os.path.join(os.getenv("HOME"), ".config" )
+            os.makedirs( jug_config_dir, exist_ok = True )
+            with open( os.path.join( jug_config_dir, "jugrc" ), "w" ) as rcfile:
+                rcfile.write( "[main]\njugdir=recent.%(jugfile)s\nwill_cite=True\n" )
             retval = True
         except:
             logger.error("Unable to configure JUG workflow manager")
