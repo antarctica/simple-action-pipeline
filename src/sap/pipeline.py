@@ -75,7 +75,7 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, reset, s
                 logger.info("Rebuild decision required.")
                 resp = input('The pipeline is already built, would you like to rebuild it? ')
             if resp == 'Y' or resp == 'y':
-                perform_decision('unbuilt', 'build', pipeline_fullpath, True, short)
+                perform_decision('unbuilt', 'build', pipeline_fullpath, True, reset, short)
         
         elif (action == 'status'):
             extra_arg = ''
