@@ -57,7 +57,6 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, reset, s
         else:
             logger.info("The pipeline does not appear to be built.")
             logger.info("Please run the pipeline build command. see pipeline --help")
-            exit(1)
         
     elif (pipeline_type == 'built'):
         # here I need to use the environment files to set environment
@@ -201,7 +200,7 @@ def perform(pipeline_directory, action, rebuild, reset, short):
     pipeline_type = initial_check(pipeline_fullpath)
     logger.info("Pipeline Status: %s", pipeline_type)
     perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, reset, short)
-    #logger.info(action+": Finished")
+    return pipeline_type
  
 def main():
     """
