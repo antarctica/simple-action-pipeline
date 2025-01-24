@@ -347,3 +347,48 @@ def populate_env_variables(environment_file):
                 os.environ[str(name)] = str(value).strip('"')
     except Exception as e:
         logger.error(e)
+
+def await_success_or_failure(jugfilepath):
+    '''
+    A blocking process which will not return until the pipeline
+    tasks all complete successfully OR there is a failure of at
+    least one task.
+    '''
+
+    logger.info("Awaiting completion or failure ...")
+    sleep(5)
+    try:
+        # Load the workers file
+        directory = Path(jugfilepath).parent
+        if os.path.isfile(Path.joinpath(directory, ".workers")):
+            with open(Path.joinpath(directory, ".workers")) as w:
+                workers = w.readlines()
+            workers = ''.join([pid for line in workers for pid in line])
+            workers = [s for s in workers.split(" ") if s]
+            hysteresis = 2
+
+            while True:
+                running_workers = []
+                # Count how many workers are still working
+                for worker in workers:
+                    if psutil.pid_exists(int(worker)):
+                        running_workers.append(worker)
+
+                if len(running_workers) == 0:
+                    logger.info("Pipeline Completed")
+                    break
+                
+                if len(running_workers) < len(workers) and len(running_workers) != 0:
+                    hysteresis -= 1  # At the end of a successful pipeline the workers
+                                     # can take several seconds to gracefully finish
+                    if hysteresis == 0:
+                        logger.info("Pipeline Failure of 1 or more task(s)")
+                        break
+                
+                sleep(10)
+        
+        else:
+            logger.info("Pipeline not running")
+
+    except Exception as e:
+        logger.error(e)
