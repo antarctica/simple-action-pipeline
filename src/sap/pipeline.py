@@ -98,6 +98,17 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, reset, s
                 subprocess.call(["jug", "status", script, extra_arg])
             os.chdir(current)
         
+        elif (action == 'await'):
+
+            current = os.getcwd()
+            os.chdir(pipeline_fullpath + 'workflow-manager')
+            
+            if len(glob.glob('*.py')) == 1:
+                utils.await_success_or_failure(pipeline_fullpath +
+                            'workflow-manager/'+str(glob.glob('*.py')[0]))
+            
+            os.chdir(current)
+
         elif (action == 'execute'):
             current = os.getcwd()
 
@@ -122,6 +133,7 @@ def perform_decision(pipeline_type, action, pipeline_fullpath, rebuild, reset, s
                         time.sleep(0.25)
                     with open(".workers", "a") as w:
                         w.writelines(worker_procs)
+
             os.chdir(current)
         
         elif (action == 'reset'):
@@ -211,8 +223,8 @@ def main():
     
     parser = argparse.ArgumentParser(description='perform action with simple-action-pipeline by supplying a pipeline directory')
     parser.add_argument("action", help="Action for the pipeline to perform. \
-                        options are 'build', 'status', 'execute', 'reset', 'halt'.", \
-                            type=str, choices=['build', 'status', 'execute', 'reset', 'halt'])
+                        options are 'build', 'status', 'execute', 'reset', 'halt', 'await'.", \
+                            type=str, choices=['build', 'status', 'execute', 'reset', 'halt', 'await'])
     parser.add_argument("pipeline_directory", help="Pipeline directory to use", nargs="*", default="./")
     parser.add_argument("-d", "--directory", help="Pipeline directory", action="store", dest='pipedir')
     parser.add_argument("-b", "--force-build", help="Force building the pipeline that is already built.", action="store_true", dest='rebuild', default=False)
