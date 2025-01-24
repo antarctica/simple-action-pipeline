@@ -1,6 +1,5 @@
 import yaml
 import os
-import re
 import glob
 import shutil
 import psutil
