@@ -126,6 +126,14 @@ The pipeline can also be `reset` following a `halt` action to start it from the 
 
 ##  
 
+### Running the pipeline with SLURM
+The action `await` is a blocking process which only returns if the pipeline completes or encounters a task failure.
+
+```
+pipeline await ./example
+```
+This is useful because some schedulers such as SLURM may be unaware that the pipeline is running parallel tasks in the background. By placing a pipeline `await` action at the end of a job script the job is held active until it is fully complete or fails. Please refer to the provided example script "slurm_job_example.sh".
+
 ## Contributing  
 
 If you find a bug, or would like to contribute please raise an issue in the first instance.
