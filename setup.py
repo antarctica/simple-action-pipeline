@@ -13,7 +13,19 @@ setuptools.setup(
   author_email='matsco@bas.ac.uk',
   package_dir={"": "src"},
   packages=setuptools.find_packages(where='src'),
-  install_requires=['jug', 'pytest', 'pyyaml', 'psutil'],
+  install_requires=[
+        'jug',
+        'pytest',
+        'pyyaml',
+        'psutil'
+    ],
+  extras_require={
+    'documentation': [
+          'mkdocs',
+          'mkdocs-include-markdown-plugin',
+          'mkdocstrings[python]'
+        ],
+    },
   entry_points={
     'console_scripts': ['pipeline=sap.pipeline:main']},
   long_description=get_content("README.md"),

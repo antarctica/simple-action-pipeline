@@ -1,0 +1,2 @@
+
+*PolarRoute-pipeline* is a data pipeline used to automate the generation of ocean/sea-ice meshes (and optionally optimised routes) for ocean vessel route-planning. This data pipeline is one component of the British Antarctic Survey's Operational PolarRoute (OPR) project.
