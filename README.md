@@ -1,12 +1,12 @@
 
-![simple action pipeline logo](assets/img/SAP-small.png)
+![simple action pipeline logo](docs/img/SAP-small.png)
 ## simple-action-pipeline (SAP)
 
-A simple pipeline framework for implementing scheduled sequential and parallel actions. Designed around two simple configuration files and implementation of an uncomplicated workflow manager. The simple action pipeline uses the python package "[**Jug**](https://jug.readthedocs.io/en/latest/)" as it's underlying workflow manager. 
+A simple pipeline framework for implementing sequential, parallel and dependant actions. Designed around two yaml configuration files and implementing an uncomplicated workflow manager. The simple action pipeline uses the python package "[**Jug**](https://jug.readthedocs.io/en/latest/)" as it's underlying workflow manager and is provided as a pip installable python3 package. 
 
 The simple action pipeline has some standard features which wrap around any application specific configuration or code.  
 
-![simple action pipeline features](assets/img/pipeline-features.png)
+![simple action pipeline features](docs/img/pipeline-features.png)
 
 ##  
 

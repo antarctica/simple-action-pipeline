@@ -14,10 +14,10 @@ The [SIIS](https://gitlab.data.bas.ac.uk/MAGIC/SIIS) front-end provides a graphi
 From the three distinct components defined above, this documentation is concerned only with part (1.)  
 
 ## Basic process flow diagram
-![Basic Process](img/polarroute-basics.png)
+![Basic Process](img/pipeline-features.png)
 
 ## Detailed process flow diagram
-![Operational PolarRoute Process](img/pipeline_dfd.png)
+![Operational PolarRoute Process](img/sap-layout.png)
 
 ## History
 During 2024 the previous repository was manually ported from a hierarchy of bash and python scripts to an implementation using a workflow manager. The original scripts remained mostly unchanged although the introduction of the [Jug](https://jug.readthedocs.io/en/latest/) parallelisation package allowed the scripts to execute with strict dependency, monitoring and pipeline control. This was initially achieved using a handbuilt workflow manager script `operational-polarroute.py`.  
