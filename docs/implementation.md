@@ -1,26 +1,36 @@
 # Implementation
 
-*PolarRoute-pipeline* is one of three broadly distinct components of the Operational PolarRoute (OPR) project.
+*simple-action-pipeline* is a python package which can create and run configuration based pipelines. There are three core principles underpinning the package implementation:
 
-1. **PolarRoute-pipeline ([this repo](https://github.com/bas-amop/PolarRoute-pipeline))**  
-Required data products are downloaded, stored and processed shoreside where the data and compute resources are abundant. This generates ocean/sea-ice meshes (and routes if required) for areas of operational interest. These generated outputs are compressed and transferred via satellite (or other) link to shipside. PolarRoute-pipeline is built on the technologies of [PolarRoute](https://github.com/bas-amop/PolarRoute) and [MeshiPhi](https://github.com/bas-amop/MeshiPhi).
+1. **Sequence**  
+Any pipeline is constructed from one or more 'actions' to be executed in sequence. Executing the pipeline will run through that sequence once. Each 'action' is a user created script (either a shell script or python script).
 
-1. **PolarRoute-server**  
-Once the meshes are available shipside they are ingested into an onboard database which allows them to be used to calculate optimised travel routes. These are calculated on demand and presented to the onboard user digitally. [PolarRoute-server](https://github.com/bas-amop/PolarRoute-server) handles the onboard mesh ingestion and route calculation through a command-line or graphical user interface.
+1. **Dependancy**  
+Any 'action' (script) can be configured to have zero, one or many other 'actions' on which it is dependant. This is strictly enforced by *simple-action-pipeline* in that no 'action' may start until all configured 'actions' have completed successfully. 
 
-1. **Sea-Ice-Information-System (SIIS)**  
-The [SIIS](https://gitlab.data.bas.ac.uk/MAGIC/SIIS) front-end provides a graphical user interface whereby users can interact with Operational PolarRoute through a standard web browser.
+1. **Stateful**  
+*simple-action-pipeline* uses a workflow manager to maintain statefullness of the entire pipeline and all configured 'actions' within it. This statefullness is held "on-disk" rather than "in-memory" which means that a pipeline's state can be queried before, during or after the pipeline is executed.
 
-From the three distinct components defined above, this documentation is concerned only with part (1.)  
+## Components of a pipeline
 
-## Basic process flow diagram
-![Basic Process](img/pipeline-features.png)
+1. **Pipeline directory**  
+Contains everything required to configure, build and run a pipeline. The diagram below shows how a project could have multiple independant pipelines.  
 
-## Detailed process flow diagram
+1. **Pipeline configuration `pipeline.yaml`**  
+A yaml configuration file for the pipeline.
+
+1. **Application configuration `application.yaml`**  
+A yaml configuration file for the 'application'. Here the 'application' refers to what you want the pipelines to do and how you want to do it.
+
+1. **Scripts directory**  
+Where to put the user written 'actions' (scripts) that form the pipeline. This is not strictly enforced and can be configured to be any directory, although for neatness it helps to be inside the pipeline directory.
+
+1. **workflow-manager directory**  
+This directory is automatically generated when the pipeline is built for the first time. After that, this directory holds live statefull information about the pipeline.
+
+
+## Layout and Commands
 ![Operational PolarRoute Process](img/sap-layout.png)
 
-## History
-During 2024 the previous repository was manually ported from a hierarchy of bash and python scripts to an implementation using a workflow manager. The original scripts remained mostly unchanged although the introduction of the [Jug](https://jug.readthedocs.io/en/latest/) parallelisation package allowed the scripts to execute with strict dependency, monitoring and pipeline control. This was initially achieved using a handbuilt workflow manager script `operational-polarroute.py`.  
-  
-### September 2024 onwards 
-The workflow manager concept was rebuilt as a separate and generic workflow manager forming the package [simple-action-pipeline](https://github.com/antarctica/simple-action-pipeline). PolarRoute-pipeline was then ported to being a configuration of *simple-action-pipeline*.
+## Commands
+In the diagram above there are examples of the CLI commands supported by *simple-action-pipeline*. For detailed information on supported commands, see the [Usage](using.md) section.

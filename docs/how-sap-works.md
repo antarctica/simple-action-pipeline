@@ -1,4 +1,4 @@
-# How PolarRoute-pipeline works
+# How simple-action-pipeline works
 
 *PolarRoute-pipeline* creates one or more meshes using up-to-date source datasets. These meshes can then have optimised routes calculated upon them with optimisations such as fuel or traveltime.  
 
