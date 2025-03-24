@@ -6,12 +6,21 @@ Depends on:
 
 ---
 
-1. Clone the repository and create and activate a python virtual environment of your choice.
-1. Inside a virtual environment or machine: `python -m pip install -r requirements-docs.txt`
+1. Create and activate a python virtual environment of your choice.
+1. Inside the virtual environment or machine:
+    - Install an editable version of simple-action-pipeline.   
+      `git clone https://github.com/antarctica/simple-action-pipeline ./simple-action-pipeline`  
+      `cd ./simple-action-pipeline`  
+      `pip install -e .`  
+    - Use `pip install -e ".[documentation]"` to edit/contribute to the documentation.
 
 ## Release/Versioning
 
 Version numbers should be used in tagging commits on the `main` branch and should be of the form `v0.1.7` using the semantic versioning convention.
+
+## Bugs & issues  
+
+If you find a bug, or would like to contribute please raise an issue in the first instance.
 
 ## Building & deploying the documentation
 

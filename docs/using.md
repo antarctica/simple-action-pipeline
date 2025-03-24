@@ -30,6 +30,8 @@ pipeline --help
 >    -r, --force-reset                Force reset if the pipeline is still active
 >    -s, --short                      Output shortened information where supported 
 ```
+> **The standard usage for the pipeline command-line tool is:**  
+> **`pipeline` `[options]` `{action}` `[target_directory]`**  
 ---
 ## Build the pipeline `build`
 To build the pipeline from the `pipeline.yaml` and `application.yaml` files. This command is also required if you have made configuration changes to an already built pipeline.  
@@ -59,7 +61,15 @@ A long (or short) report should be output. This `status` command can be run at a
 To start the pipeline.
 ```bash
 pipeline execute <path-to-pipeline-directory>
-``` 
+```  
+Because the pipeline state persists after completion (or failure) it must be `reset` before it can be executed again. Trying to execute a completed pipeline will result in no execution as all the work has already been done.  
+
+```bash
+pipeline execute ./example  
+  
+INFO:pipeline:All Tasks complete, nothing to do  
+INFO:pipeline:Use the [reset] action before re-executing a completed pipeline  
+```
 ---
 ## Reset the pipeline `reset`
 Because the statefulness of the pipeline persists even after completion, an additional step is required before the pipeline can be executed again. This is called a `reset`, and when initiated, the workflow manager erases the state of the pipeline ready for re-execution.  
@@ -83,6 +93,15 @@ Following a 'halt' there are two possible choices:
 
 1. `execute` will resume the pipeline from where it was halted.
 1. `reset` will reset the pipeline to it's un-executed state.
+
+---
+## Running the pipeline with SLURM `await`  
+The action `await` is a blocking process which only returns if the pipeline completes or encounters a task failure.
+
+```
+pipeline await ./example
+```
+This is useful because some schedulers such as SLURM may be unaware that the pipeline is running parallel tasks in the background. By placing a pipeline `await` action at the end of a job script the job is held active until it is fully complete or fails. Please refer to the provided example script [slurm_job_example.sh](https://raw.githubusercontent.com/antarctica/simple-action-pipeline/main/example/slurm_job_example.sh).
 
 ---
 ## Tips
