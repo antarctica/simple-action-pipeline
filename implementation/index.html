@@ -104,11 +104,11 @@
 <p><em>simple-action-pipeline</em> is a python package which can create and run configuration based pipelines. There are three core principles underpinning the package implementation:</p>
 <ol>
 <li>
-<p><strong>Sequence</strong><br />
+<p><strong>Sequential</strong><br />
 Any pipeline is constructed from one or more 'actions' to be executed in sequence. Executing the pipeline will run through that sequence once. Each 'action' is a user created script (either a shell script or python script).</p>
 </li>
 <li>
-<p><strong>Dependancy</strong><br />
+<p><strong>Dependant</strong><br />
 Any 'action' (script) can be configured to have zero, one or many other 'actions' on which it is dependant. This is strictly enforced by <em>simple-action-pipeline</em> in that no 'action' may start until all configured dependancy 'actions' have completed successfully. </p>
 </li>
 <li>
