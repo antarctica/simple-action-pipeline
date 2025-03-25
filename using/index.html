@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Usage - simple-action-pipeline</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Usage";
+        var mkdocs_page_input_path = "using.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> simple-action-pipeline
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../implementation/">Implementation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Usage</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#getting-help-h-help">Getting help -h, --help</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#build-the-pipeline-build">Build the pipeline build</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#get-the-pipeline-status-status">Get the pipeline status status</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#execute-the-pipeline-execute">Execute the pipeline execute</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reset-the-pipeline-reset">Reset the pipeline reset</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#halt-all-pipeline-tasks-halt">Halt all pipeline tasks halt</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-the-pipeline-with-slurm-await">Running the pipeline with SLURM await</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../example/">Example</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../how-sap-works/">How simple-action-pipeline works</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../development/">Development</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">simple-action-pipeline</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/antarctica/simple-action-pipeline/edit/master/docs/using.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="usage">Usage</h1>
+<p>The primary method for interacting with the <em>simple-action-pipeline</em> package is via it's command-line-interface (CLI), with the command <code>pipeline</code>.</p>
+<ul>
+<li><em>make sure your python virtual environment is activated before issuing any of the commands below</em><br />
+<em><code>source &lt;path-to-virtual-environment&gt;\bin\activate</code></em> </li>
+</ul>
+<hr />
+<h2 id="getting-help-h-help">Getting help <code>-h, --help</code></h2>
+<pre><code class="language-bash">pipeline -h
+# or
+pipeline --help
+</code></pre>
+<pre><code class="language-bash">&gt;  usage: pipeline [-h] [-d PIPEDIR] [-b] [-r] [-s] {build,status,execute,reset,halt,await} [pipeline_directory ...]
+&gt;  
+&gt;  perform action with simple-action-pipeline by supplying a pipeline directory
+&gt;  
+&gt;  positional arguments:
+&gt;    {build,status,execute,reset,halt,await}
+&gt;                                     Action for the pipeline to perform. options are 'build', 'status', 'execute', 'reset', 'halt', 'await'.
+&gt;    pipeline_directory               Pipeline directory to use
+&gt;  
+&gt;  options:
+&gt;    -h, --help                       show this help message and exit
+&gt;    -d PIPEDIR, --directory PIPEDIR  Pipeline directory
+&gt;    -b, --force-build                Force building the pipeline that is already built.
+&gt;    -r, --force-reset                Force reset if the pipeline is still active
+&gt;    -s, --short                      Output shortened information where supported 
+</code></pre>
+<blockquote>
+<p><strong>The standard usage for the pipeline command-line tool is:</strong><br />
+<strong><code>pipeline</code> <code>[options]</code> <code>{action}</code> <code>[target_directory]</code></strong>  </p>
+</blockquote>
+<hr />
+<h2 id="build-the-pipeline-build">Build the pipeline <code>build</code></h2>
+<p>To build the pipeline from the <code>pipeline.yaml</code> and <code>application.yaml</code> files. This command is also required if you have made configuration changes to an already built pipeline.  </p>
+<pre><code class="language-bash">pipeline build &lt;path-to-pipeline-directory&gt;
+</code></pre>
+<p>If you attempt to rebuild an already built pipeline you will be given a confirmation prompt. To suppress this the <code>-b, --force-build</code> option is provided.  </p>
+<pre><code class="language-bash">pipeline build &lt;path-to-pipeline-directory&gt; --force-build
+</code></pre>
+<hr />
+<h2 id="get-the-pipeline-status-status">Get the pipeline status <code>status</code></h2>
+<p>As well as checking the status, it can also be used to check that the pipeline is installed and setup correctly.</p>
+<pre><code class="language-bash">pipeline status &lt;path-to-pipeline-directory&gt;
+# or for the shorter output
+pipeline status &lt;path-to-pipeline-directory&gt; --short
+</code></pre>
+<p>A long (or short) report should be output. This <code>status</code> command can be run at any time and will give the 'live' state of the pipeline and it's tasks.</p>
+<blockquote>
+<ul>
+<li>The status of the pipeline is stateful and persistent, even after any execution is completed, which is useful for querying long after the pipeline has completed. This holds true if the pipeline fails for any reason.  </li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="execute-the-pipeline-execute">Execute the pipeline <code>execute</code></h2>
+<p>To start the pipeline.</p>
+<pre><code class="language-bash">pipeline execute &lt;path-to-pipeline-directory&gt;
+</code></pre>
+<p>Because the pipeline state persists after completion (or failure) it must be <code>reset</code> before it can be executed again. Trying to execute a completed pipeline will result in no execution as all the work has already been done.  </p>
+<pre><code class="language-bash">pipeline execute ./example  
+
+INFO:pipeline:All Tasks complete, nothing to do  
+INFO:pipeline:Use the [reset] action before re-executing a completed pipeline  
+</code></pre>
+<hr />
+<h2 id="reset-the-pipeline-reset">Reset the pipeline <code>reset</code></h2>
+<p>Because the statefulness of the pipeline persists even after completion, an additional step is required before the pipeline can be executed again. This is called a <code>reset</code>, and when initiated, the workflow manager erases the state of the pipeline ready for re-execution.  </p>
+<pre><code class="language-bash">pipeline reset &lt;path-to-pipeline-directory&gt;
+</code></pre>
+<blockquote>
+<ul>
+<li>Resetting a running pipeline is not advised and may produce unpredictable behaviour (please refer to <code>halt</code> below).  </li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="halt-all-pipeline-tasks-halt">Halt all pipeline tasks <code>halt</code></h2>
+<p>If the pipeline needs to be halted whilst it is running, the <code>halt</code> command has been provided.  </p>
+<pre><code class="language-bash">pipeline halt &lt;path-to-pipeline-directory&gt;
+</code></pre>
+<blockquote>
+<ul>
+<li>This does not erase the statefulness of the pipeline, so the <code>status</code> command can be used after halting has occured. Any pipeline tasks that have already completed will remain so, although any tasks which haven't fully completed will revert to being not started.  </li>
+</ul>
+</blockquote>
+<p>Following a 'halt' there are two possible choices:  </p>
+<ol>
+<li><code>execute</code> will resume the pipeline from where it was halted.</li>
+<li><code>reset</code> will reset the pipeline to it's un-executed state.</li>
+</ol>
+<hr />
+<h2 id="running-the-pipeline-with-slurm-await">Running the pipeline with SLURM <code>await</code></h2>
+<p>The action <code>await</code> is a blocking process which only returns if the pipeline completes or encounters a task failure.</p>
+<pre><code>pipeline await ./example
+</code></pre>
+<p>This is useful because some schedulers such as SLURM may be unaware that the pipeline is running parallel tasks in the background. By placing a pipeline <code>await</code> action at the end of a job script the job is held active until it is fully complete or fails. Please refer to the provided example script <a href="https://raw.githubusercontent.com/antarctica/simple-action-pipeline/main/example/slurm_job_example.sh">slurm_job_example.sh</a>.</p>
+<hr />
+<h2 id="tips">Tips</h2>
+<ul>
+<li>
+<p>Using any of the pipeline commands <strong>does not</strong> require sourcing of the pipeline's <code>pipeline.env</code> and <code>application.env</code> files beforehand, this is automatically handled by the pipeline.  </p>
+</li>
+<li>
+<p>Running the pipeline command from inside a pipeline directory does not require specifying the <code>&lt;path-to-pipeline-directory&gt;</code> argument. When this argument is missing, the pipeline assumes the use of the current working directory. For instance, if you are inside the pipeline directory, you can simply issue the command <code>pipeline status</code> to get the current status.</p>
+</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../installation/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../example/" class="btn btn-neutral float-right" title="Example">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/antarctica/simple-action-pipeline/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../example/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

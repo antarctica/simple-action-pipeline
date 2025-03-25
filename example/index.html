@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Example - simple-action-pipeline</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Example";
+        var mkdocs_page_input_path = "example.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> simple-action-pipeline
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../implementation/">Implementation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../using/">Usage</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Example</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#basic-tutorial">Basic tutorial</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#create-a-project-directory-for-the-pipeline">Create a project directory for the pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-and-link-to-python-virtual-env">Create and link to python virtual env</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-a-pipeline-directory">Create a pipeline directory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-the-required-pipeline-and-application-yamls">Create the required pipeline and application yamls</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-the-scripts-directory-and-scripts">Create the scripts directory and scripts</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#your-project-should-now-have-this-structure">Your project should now have this structure:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-the-pipeline-configuration">Create the pipeline configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-the-application-configuration">Create the application configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-both-application-scripts">Create both application scripts</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#build-the-pipeline">Build the pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#check-the-pipeline-status">Check the pipeline status</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#run-the-pipeline">Run the pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#make-a-change-to-the-pipeline">Make a change to the pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#now-try-adding-an-extra-script-to-the-pipeline">Now try adding an extra script to the pipeline</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pre-made-example">Pre-made example</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../how-sap-works/">How simple-action-pipeline works</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../development/">Development</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">simple-action-pipeline</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Example</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/antarctica/simple-action-pipeline/edit/master/docs/example.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="example">Example</h1>
+<h2 id="basic-tutorial">Basic tutorial</h2>
+<p>Lets create a pipeline from scratch using the <em>simple-action-pipeline</em> package.</p>
+<h3 id="create-a-project-directory-for-the-pipeline"><strong>Create a project directory for the pipeline</strong></h3>
+<blockquote>
+<pre><code>mkdir hello-world-project
+</code></pre>
+</blockquote>
+<h3 id="create-and-link-to-python-virtual-env"><strong>Create and link to python virtual env</strong></h3>
+<p><em>assuming you have python &gt;= 3.9 available</em></p>
+<blockquote>
+<pre><code>cd hello-world-project
+python -m venv ./hello-venv
+ln -s ./hello-venv/bin/activate activate
+source activate
+python -m pip install sap@git+https://github.com/antarctica/simple-action-pipeline
+</code></pre>
+</blockquote>
+<h3 id="create-a-pipeline-directory"><strong>Create a pipeline directory</strong></h3>
+<blockquote>
+<pre><code>mkdir hello-pipeline
+</code></pre>
+</blockquote>
+<h3 id="create-the-required-pipeline-and-application-yamls"><strong>Create the required pipeline and application yamls</strong></h3>
+<blockquote>
+<pre><code>cd hello-pipeline
+touch pipeline.yaml
+touch application.yaml
+</code></pre>
+</blockquote>
+<h3 id="create-the-scripts-directory-and-scripts"><strong>Create the scripts directory and scripts</strong></h3>
+<blockquote>
+<pre><code>mkdir hello-world-scripts
+touch hello-world-scripts/hello.sh
+touch hello-world-scripts/world.py
+</code></pre>
+</blockquote>
+<h3 id="your-project-should-now-have-this-structure">Your project should now have this structure:</h3>
+<pre><code class="language-bash">hello-world-project/
+│
+├── hello-pipeline/
+│   │
+│   ├── hello-world-scripts/
+│   │   │
+│   │   ├── hello.sh
+│   │   └── world.py
+│   │
+│   ├── application.yaml
+│   └── pipeline.yaml
+│
+├── activate
+│
+└── hello-venv/
+    │
+    ├── bin/
+    └── ...
+</code></pre>
+<h3 id="create-the-pipeline-configuration"><strong>Create the pipeline configuration</strong></h3>
+<p>Make the pipeline.yaml file contain the following:  </p>
+<pre><code class="language-bash">---
+pipeline:
+
+    name: tutorial
+    description: pipeline configuration file for the tutorial pipeline
+
+    env:
+
+        description: environment variables for the pipeline
+        create-env-file: true
+        env-filename: pipeline.env
+
+        variables:
+        - PIPELINE_DIRECTORY: &quot;./&quot;
+        - PIPELINE_MAXWORKERS: 1
+</code></pre>
+<h3 id="create-the-application-configuration"><strong>Create the application configuration</strong></h3>
+<p>Make the application.yaml file contain the following:  </p>
+<pre><code class="language-bash">---
+application:
+
+    name: hello-world
+    description: application configuration file for the hello-world tutorial
+
+    env:
+
+        description: environment variables for the application
+        create-env-file: true
+        env-filename: application.env
+
+        variables:
+        - PIPELINE_DIRECTORY: &quot;./&quot;
+        - SCRIPTS_DIRECTORY: &quot;./hello-world-scripts&quot;
+        - LETTER_DELAY_SECONDS: 2
+
+    sequence:
+
+        description: sequence of actions for the application
+
+        sequence:
+        - script: 
+            name: hello.sh
+            depends: ''
+        - script:
+            name: world.py
+            depends: hello.sh
+</code></pre>
+<h3 id="create-both-application-scripts"><strong>Create both application scripts</strong></h3>
+<p><strong><em>hello.sh</em></strong>  </p>
+<pre><code class="language-bash">#!/usr/bin/bash
+
+# hello.sh
+
+set -e
+
+string='hello '
+delay=${LETTER_DELAY_SECONDS}
+
+for ((i=0; i&lt;${#string}; i++)); do
+    sleep ${delay}
+    echo &quot;${string:i:1}&quot;
+done
+
+</code></pre>
+<p><strong><em>world.py</em></strong>  </p>
+<pre><code class="language-python">from os import environ
+from time import sleep
+
+# world.py
+
+string = 'world'
+delay = int(environ['LETTER_DELAY_SECONDS'])
+
+for i in string:
+    sleep(delay)
+    print(i , end='\n')
+
+</code></pre>
+<h3 id="build-the-pipeline"><strong>Build the pipeline</strong></h3>
+<ul>
+<li>Go back to the root project directory.  <blockquote>
+<pre><code>cd ..
+</code></pre>
+</blockquote>
+</li>
+<li>Build the pipeline.<blockquote>
+<pre><code>pipeline build ./hello-pipeline
+</code></pre>
+<p>This should build without any errors.  </p>
+</blockquote>
+</li>
+</ul>
+<h3 id="check-the-pipeline-status"><strong>Check the pipeline status</strong></h3>
+<blockquote>
+<pre><code>pipeline status ./hello-pipeline
+</code></pre>
+<p>... or try the shorter version.  </p>
+<pre><code>pipeline status ./hello-pipeline --short
+</code></pre>
+</blockquote>
+<h3 id="run-the-pipeline"><strong>Run the pipeline</strong></h3>
+<blockquote>
+<pre><code>pipeline execute ./hello-pipeline
+</code></pre>
+<p>You can observe the script outputting to the terminal with 2 second gaps between each character. There will also be some output from the pipeline to show when tasks start and finish. At successful pipeline completion, a pipeline report is also output.  </p>
+</blockquote>
+<pre><code class="language-bash">(hello-venv) bash-4.2$ pipeline execute ./hello-pipeline
+INFO:pipeline:Target: ~/hello-world-project/hello-pipeline/
+INFO:pipeline:Pipeline Status: built
+INFO:pipeline:Executing pipeline tutorial-hello-world.py ; MaxWorkers=1
+(hello-venv) bash-4.2$ INFO:2025-03-25 08:44:50.224135 | started pipeline
+      Failed     Waiting       Ready    Complete      Active  Task name                                                                    
+------------------------------------------------------------------------------------
+           0           0           1           0           0  tutorial-hello-world._00_start_pipeline                                                      
+           0           1           0           0           0  tutorial-hello-world._01_hello_sh                                                            
+           0           1           0           0           0  tutorial-hello-world._02_world_py                                                            
+           0           1           0           0           0  tutorial-hello-world._03_finish_pipeline                                                     
+....................................................................................
+           0           3           1           0           0  Total                                                                 
+
+INFO:2025-03-25 08:44:50.648218:pipeline:Task: _01_hello_sh started.
+h
+e
+l
+l
+o
+
+INFO:2025-03-25 08:45:02.678676:pipeline:Task: _01_hello_sh finished.
+INFO:2025-03-25 08:45:02.847103:pipeline:Task: _02_world_py started.
+w
+o
+r
+l
+d
+INFO:2025-03-25 08:45:12.894025:pipeline:Task: _02_world_py finished.
+INFO:2025-03-25 08:45:13.593772 | finished pipeline
+      Failed     Waiting       Ready    Complete      Active  Task name                                                                          
+------------------------------------------------------------------------------------
+_00_start_pipeline                                                                  
+           0           1           0           0           0  tutorial-hello-world._01_hello_sh                                                            
+           0           1           0           0           0  tutorial-hello-world._02_world_py                                                             
+           0           1           0           0           0  tutorial-hello-world._03_finish_pipeline                                                     
+....................................................................................
+           0           3           1           0           0  Total                                                                    
+
+    Executed      Loaded  Task name                                                 
+------------------------------------------------------------------------------------
+           1           0  tutorial-hello-world._00_start_pipeline                   
+           1           0  tutorial-hello-world._01_hello_sh                         
+           1           0  tutorial-hello-world._02_world_py                        
+           1           0  tutorial-hello-world._03_finish_pipeline  
+....................................................................................
+           4           0  Total 
+</code></pre>
+<h3 id="make-a-change-to-the-pipeline"><strong>Make a change to the pipeline</strong></h3>
+<p>For this example lets make both scripts run much slower by increasing the <code>LETTER_DELAY_SECONDS</code> environment variable to 10 seconds.  </p>
+<ul>
+<li>Change the definition in <code>application.yaml</code> and save it:<blockquote>
+<pre><code>LETTER_DELAY_SECONDS: 10
+</code></pre>
+</blockquote>
+</li>
+<li>Rebuild the pipeline:  <blockquote>
+<pre><code>pipeline build ./hello-pipeline --force-build
+</code></pre>
+</blockquote>
+</li>
+<li>Run the pipeline:<blockquote>
+<pre><code>pipeline execute ./hello-pipeline
+</code></pre>
+</blockquote>
+</li>
+<li>Now the pipeline tasks are slow enough that you can use the status command to check the pipeline whilst it runs:  <blockquote>
+<pre><code>pipeline status ./hello-pipeline
+</code></pre>
+</blockquote>
+</li>
+<li>You can also halt the pipeline mid run:<blockquote>
+<pre><code>pipeline halt ./hello-pipeline
+</code></pre>
+</blockquote>
+</li>
+<li>Fully complete scripts will remain complete after a halt and from there you can resume the pipeline with the <code>execute</code> command:<blockquote>
+<pre><code>pipeline execute ./hello-pipeline
+</code></pre>
+</blockquote>
+</li>
+<li>Or you can choose to run the pipeline from the very beginning by issuing a reset command first:<blockquote>
+<pre><code>pipeline halt ./hello-pipeline
+pipeline reset ./hello-pipeline
+pipeline execute ./hello-pipeline
+</code></pre>
+</blockquote>
+</li>
+</ul>
+<h3 id="now-try-adding-an-extra-script-to-the-pipeline"><strong>Now try adding an extra script to the pipeline</strong></h3>
+<p>The sequence section of <code>application.yaml</code> allows you to create simple-linear or complex-parallel pipelines by defining more scripts with intricate dependancies.  </p>
+<p>Remember, if you want multiple scripts to run in parallel you will need to increase the number of <code>PIPELINE_MAXWORKERS</code> in <code>pipeline.yaml</code>.</p>
+<h2 id="pre-made-example">Pre-made example</h2>
+<p>There is a more complicated computational example pipeline in the GitHub repository <a href="https://github.com/antarctica/simple-action-pipeline/tree/main/example">here</a> in the example directory.  </p>
+<p>Using the commands outlined in <a href="../using/">Usage</a> you can try out this example as the configuration files and application scripts are already made for you.  </p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../using/" class="btn btn-neutral float-left" title="Usage"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../how-sap-works/" class="btn btn-neutral float-right" title="How simple-action-pipeline works">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/antarctica/simple-action-pipeline/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../using/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../how-sap-works/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

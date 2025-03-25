@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>How simple-action-pipeline works - simple-action-pipeline</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "How simple-action-pipeline works";
+        var mkdocs_page_input_path = "how-sap-works.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> simple-action-pipeline
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../implementation/">Implementation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../using/">Usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../example/">Example</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">How simple-action-pipeline works</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#minimum-configuration">Minimum configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-workflow-manager">The workflow manager</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#optimising-pipeline_maxworkers">Optimising PIPELINE_MAXWORKERS</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment variables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#task-sequence">Task sequence</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#further-detail">Further detail</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../development/">Development</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">simple-action-pipeline</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">How simple-action-pipeline works</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/antarctica/simple-action-pipeline/edit/master/docs/how-sap-works.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-simple-action-pipeline-works">How simple-action-pipeline works</h1>
+<p><em>simple-action-pipeline (sap)</em> provides a generic command line tool for creating configuration based reproducible pipelines.  </p>
+<p>Behind the scenes <em>sap</em> uses some features of the workflow manager <a href="https://github.com/luispedro/jug">Jug</a> to both create and then manage the pipeline.  </p>
+<p>Firstly, <em>sap</em> treats a single directory as a pipeline, containing all of the required configuration and code for the pipeline. This is referred to as the <code>&lt;pipeline-directory&gt;</code> or <code>&lt;target-directory&gt;</code>.  </p>
+<p>Secondly, <em>sap</em> builds the pipeline from <code>pipeline.yaml</code>, <code>application.yaml</code> and a <code>scripts</code> subdirectory. Building the pipeline is done by invoking the <strong>'build'</strong> action. Once built there are a number of other actions as detailed in the <a href="../using/">Usage</a> section.</p>
+<h2 id="minimum-configuration">Minimum configuration</h2>
+<p>As a bare minimum the <code>pipeline.yaml</code> and <code>application.yaml</code> must contain the following as demonstrated below:</p>
+<p><strong>pipeline.yaml</strong></p>
+<pre><code>pipeline:
+
+    name: pipeline_name
+    description: pipeline configuration file
+
+    env:
+
+        description: environment variables for the pipeline
+        create-env-file: true
+        env-filename: pipeline.env
+
+        variables:
+        - PIPELINE_DIRECTORY: "./"
+        - PIPELINE_MAXWORKERS: 1
+</code></pre>
+<p><strong>application.yaml</strong></p>
+<pre><code>application:
+
+    name: application_name
+    description: application configuration file
+
+    env:
+
+        description: environment variables for the application
+        create-env-file: true
+        env-filename: application.env
+
+        variables:
+        - PIPELINE_DIRECTORY: "./"
+        - SCRIPTS_DIRECTORY: "./scripts"
+
+    sequence:
+
+        description: sequence of actions for the application
+
+        sequence:
+        - script: 
+            name: first_script.sh
+            depends: ''
+</code></pre>
+<p>As you can see, this pipeline runs just a single script which depends on no other scripts. The maximum number of workers is set to 1 (this is how many parallel scripts can run at any one time).  </p>
+<p>The <code>PIPELINE_DIRECTORY</code> must be defined in both yaml files as these are checked during the build process. <code>PIPELINE_MAXWORKERS</code> and <code>SCRIPTS_DIRECTORY</code> must also be defined. Also, any scripts defined under the 'sequence' section must exist in the scripts directory for the build to succeed.</p>
+<h2 id="the-workflow-manager">The workflow manager</h2>
+<p>The pipeline 'build' command creates or re-creates from the <code>application.yaml</code>, <code>pipeline.yaml</code> and <code>scripts</code> directory, a python script that is used by the <a href="https://github.com/luispedro/jug">Jug</a> parallelisation package. Inspection of this auto-generated python script shows how all the dependancies are set up.  </p>
+<p><em>sap</em> invokes Jug with this python script for each <code>WORKER</code> up to <code>PIPELINE_MAXWORKERS</code>, creating one or more parallel processes that can complete multiple tasks whilst being monitored. This collection of python script, Jug and <code>WORKERS</code> is referred to as the 'workflow-manager'.  </p>
+<p>Everything related to the workflow manager's operation is contained within the <code>&lt;pipeline-directory&gt;/workflow-manager/</code> directory, which is created by the 'build' command.</p>
+<h2 id="optimising-pipeline_maxworkers">Optimising <code>PIPELINE_MAXWORKERS</code></h2>
+<p>This <code>pipeline.yaml</code> file contains the <code>PIPELINE_MAXWORKERS</code> definition. The workflow manager will attempt to allocate <strong>up to</strong> this many workers to the pipeline.  </p>
+<p>It can be important to think carefully about setting the maximum number of workers as described in the example below.</p>
+<blockquote>
+<p>Example:<br />
+<strong>| You have 10 tasks the <em>could</em> all execute in parallel.</strong><br />
+<strong>| You are using a platform that has 6 CPU threads.</strong><br />
+  * If you set <code>MAXWORKERS</code> to <code>2</code> the workflow manager will invoke 2 workers, meaning that the 2 CPU threads can complete all 10 tasks twice as quickly as if there was only 1 worker (i.e. 1 task done at a time).<br />
+  * If you set <code>MAXWORKERS</code> to <code>10</code> the workflow manager will invoke 10 workers but because this is more than available CPU threads there will be a significant amount of CPU context switching to achieve the effect of 10 CPU threads running. This results in slower performance.<br />
+  * If you set <code>MAXWORKERS</code> to <code>5</code> the workflow manager will invoke 5 workers, meaning that the 5 CPU threads can complete all 10 tasks five times as quickly as if there was only 1 worker (i.e. 1 task done at a time). This would also avoid CPU context switch and also leave 1 CPU thread free for the underlying platform.  </p>
+</blockquote>
+<h2 id="environment-variables">Environment variables</h2>
+<p>If your pipeline relies upon constants held within environment variables, these can be pre-defined under the <code>env:variables:</code> section of either yaml config file. <em>sap</em> will make sure these environment variables are available whenever the pipeline runs.  </p>
+<h2 id="task-sequence">Task sequence</h2>
+<p>The sequence order and dependancies of the tasks (scripts) are defined under the <code>sequence:</code> section of the <code>application.yaml</code> config file.  </p>
+<p>Each task (script) in the sequence has a <code>name:</code> and <code>depends:</code> field. The name is the name of the script to be found in the scripts directory. The depends can be either a single script name or a list of script names if there are multiple dependancies. If a script has no dependancy then the <code>depends:</code> field should contain an empty string <code>''</code>.  </p>
+<p><strong><em>Currently shell scripts <code>.sh</code> and python scripts <code>.py</code> are the only supported task (script) names.</em></strong> </p>
+<h2 id="further-detail">Further detail</h2>
+<p>For more detail on the inner workings of <strong>Jug</strong> or <strong>sap</strong>, please refer to the documentation for:<br />
+ - <a href="https://jug.readthedocs.io/en/latest/">Jug</a><br />
+ - <a href="https://github.com/antarctica/simple-action-pipeline">simple-action-pipeline repo</a>    </p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../example/" class="btn btn-neutral float-left" title="Example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../development/" class="btn btn-neutral float-right" title="Development">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/antarctica/simple-action-pipeline/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../example/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../development/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
