@@ -229,3 +229,6 @@ Remember, if you want multiple scripts to run in parallel you will need to incre
 
 
 ## Pre-made example
+There is a more complicated computational example pipeline in the GitHub repository [here](https://github.com/antarctica/simple-action-pipeline/tree/main/example) in the example directory.  
+
+Using the commands outlined in [Usage](using.md) you can try out this example as the configuration files and application scripts are already made for you.  
