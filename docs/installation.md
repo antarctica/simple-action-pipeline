@@ -2,7 +2,6 @@
 
 It is recommended to use a Python virtual environment to reduce the risk of any Python package conflicts.
 
-### HPC Workstation or Local PC
 
 1. **Create a Python virtual environment**  
    The Python version must be **Python 3.9** or higher.
