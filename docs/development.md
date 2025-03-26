@@ -20,7 +20,7 @@ Version numbers should be used in tagging commits on the `main` branch and shoul
 
 ## Bugs & issues  
 
-If you find a bug, or would like to contribute please raise an issue in the first instance.
+If you find a bug, or would like to contribute please [raise an issue](https://github.com/antarctica/simple-action-pipeline/issues/new) in the first instance.
 
 ## Building & deploying the documentation
 
