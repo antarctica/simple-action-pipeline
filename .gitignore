@@ -3,6 +3,7 @@
 *.env
 example/workflow-manager
 example/workflow-manager/*
+hello-world-project/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
